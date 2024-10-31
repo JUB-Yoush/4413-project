@@ -9,15 +9,19 @@ module.exports = {
 
       colors: {
         camel: '#D4A373',
+        tea: {100:'#CCD5AE'},
         cream: '#FAEDCD',
-        // camel: ({ opacityValue }) => {
-        //   if (opacityValue !== undefined) {
-        //     return `rgba(212, 163, 115, ${opacityValue})`;
-        //   }
-        //   return 'rgba(212, 163, 115, 1)';  // Fully opaque if no opacity specified
-        // },
-        tea: '#FAEDCD',
       },
+      fontSize: {
+        xs: '0.8rem',
+        sm: '0.9rem',
+        base: '1rem',
+        xl: '1.25rem',
+        '2xl': '1.563rem',
+        '3xl': '1.953rem',
+        '4xl': '2.441rem',
+        '5xl': '3.052rem',
+      }
     },
   },
   plugins: [],

@@ -19,22 +19,13 @@ interface NavLink {
   
   const Navbar: React.FC = () => {
     return (
-      <nav className="bg-tea-800 p-10"> 
+      <nav className="bg-tea-800 p-10 text-sm"> 
 
         <ul className="flex flex-row text-center items-center">
 
 
           {/* DJ WAMP Logo */}
-          <li className="basis-[20%] flex justify-start"
-          style={{
-            color: "#000",
-            fontFamily: "'Lexend Zetta', sans-serif",
-            fontSize: "25px",
-            fontStyle: "normal",
-            fontWeight: 400,
-            lineHeight: "normal",
-          }}>DJ WAMP</li>
-
+          <li className="basis-[20%] flex justify-start text-2xl font-['Lexend_Zetta']">DJ WAMP</li>
           {/* Page Links */}
           <li className="basis-[54%] pr-[90px]">
             <ul className="flex flex-row text-center w-full">
@@ -45,14 +36,10 @@ interface NavLink {
             </ul>
           </li>
 
-          {/* Shopping Cart */}
-          <li className="basis-[3%] flex justify-start items-center">
+          {/* Shopping Cart + Profile */}
+          <li className="basis-[6%] flex justify-end items-center">
             <img src={cart} alt="Shopping Cart" />
-          </li>
-
-          {/* Profile */}
-          <li className="basis-[3%] flex justify-end items-center">
-            <img src={person} alt="Profile" className="text-center" />
+            <img src={person} alt="Profile" className="pl-5" />
           </li>
 
           {/* Search Bar */}

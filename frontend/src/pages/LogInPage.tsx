@@ -1,6 +1,7 @@
 import React from 'react';
 import Googollogo from "../assets/Googollogo.png";
 import Logo from "../components/Logo.tsx";
+import Button from "../components/Button.tsx";
 
 const LogInPage: React.FC = () => {
     return (
@@ -21,8 +22,7 @@ const LogInPage: React.FC = () => {
                 className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
         </div>
         <div className="mb-4 w-full grid justify-center items-center">
-            <button className="bg-transparent text-black mt-5 py-1 px-2 border border-camel  hover:text-white hover:bg-camel hover:border-transparent"
-                    type={"submit"}>Log In</button>
+            <Button type={"submit"} >Log In</Button>
         </div>
 
         <hr className={"border-camel mt-10 mb-10"}/>

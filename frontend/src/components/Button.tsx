@@ -15,7 +15,7 @@ type Ref = HTMLButtonElement;
 // extend the base button attributes
 interface ButtonProps extends BaseButtonAttributes {
     disabled?: boolean;
-    buttonStyle?: VariantProps<typeof clickedButton |typeof secButton>;
+    buttonStyle?: VariantProps<typeof clickedButton |typeof secButton |typeof baseButton>;
     className?:string,
     buttonVariant?: "clicked" | "sec";
 }
@@ -48,7 +48,5 @@ const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
         </button>
     );
 });
-
-Button.displayName = "Button"; //debugging
 
 export default Button;

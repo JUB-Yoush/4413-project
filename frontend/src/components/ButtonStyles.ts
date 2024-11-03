@@ -5,10 +5,6 @@ export const baseButton = tv({
         'cursor-pointer hover:text-white hover:bg-camel hover:border-transparent' +
         'text-center relative align-middle inline-flex items-center justify-center',
     variants: {
-        color: {
-            camel: '',
-            tea: '',
-        },
         size: {
             lg: 'text-base py-3 px-6',
             xs: 'text-xs py-1 px-2',
@@ -55,19 +51,12 @@ export const baseButton = tv({
 // solid button
 export const clickedButton = tv({
     extend: baseButton,
-    variants: {
-        color: {
-            camel: 'bg-camel text-white',
-        },
-    },
+    base: 'bg-camel text-white'
 });
 
 // solid button
 export const secButton = tv({
     extend: baseButton,
-    variants: {
-        color: {
-            tea: 'bg-tea',
-        },
-    },
+    base: 'bg-transparent border border-tea ' +
+        'hover:text-black hover:bg-tea hover:border-transparent',
 });

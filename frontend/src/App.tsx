@@ -3,13 +3,18 @@ import './App.css';
 
 function App() {
   const [hello, setHello] = useState('hi');
+  // use javascript functions
 
+  // return html component
   return (
     <>
-      <h1 className="text-4x1 text-blue-500">{hello}</h1>
-      <button onClick={() => setHello('Amogus')}>Click me</button>
+      <h1> hi </h1>
     </>
   );
 }
+
+// javascript -> .js
+// typescript -> .ts
+// typescript + react -> .tsx
 
 export default App;

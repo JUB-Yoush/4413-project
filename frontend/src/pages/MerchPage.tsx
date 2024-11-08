@@ -9,12 +9,12 @@ const MerchPage: React.FC = () => {
     { id: 1, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
     { id: 2, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
     { id: 3, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
-    { id: 1, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
-    { id: 2, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
-    { id: 3, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
-    { id: 1, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
-    { id: 2, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
-    { id: 3, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
+    { id: 4, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
+    { id: 5, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
+    { id: 6, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
+    { id: 7, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
+    { id: 8, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
+    { id: 9, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
     // Add more products here
   ];
 

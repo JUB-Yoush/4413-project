@@ -7,7 +7,7 @@ import {useState} from 'react';
 import axios from 'axios';
 
 interface Token{
-    setToken: React.Dispatch<React.SetStateAction<string | null>>; //is passed from App.tsx to manage session
+    setToken: (userToken: string) => void; //is passed from App.tsx to manage session
 }
 const LogInPage: React.FC<Token> = (setToken) => {
 

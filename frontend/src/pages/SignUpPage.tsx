@@ -5,7 +5,7 @@ import Button from "../components/Button.tsx";
 import axios from "axios";
 
 interface Token{
-    setToken: React.Dispatch<React.SetStateAction<string | null>>; //is passed from App.tsx to manage session
+    setToken: (userToken: string) => void; //is passed from App.tsx to manage session
 }
 const SignUpPage: React.FC<Token> = (setToken) => {
     // form state starts with fields as empty strings

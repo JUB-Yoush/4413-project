@@ -6,7 +6,7 @@ import axios from "axios";
 interface Prop{
     tokenStr: string|null;
     removeToken : ()=>void;
-    setToken: React.Dispatch<React.SetStateAction<string | null>>;
+    setToken: (userToken: string) => void;
 }
 const AccountPage: React.FC<Prop> = (prop) => {
     const [accountData, setAcctData] =

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import ProfileDropdown from './ProfileDropdown';
 import CartDropdown from './CartDropdown';
+import React from "react";
 
 // Define a type for the navigation links
 interface NavLink {
@@ -25,8 +25,13 @@ const cartItems = [
   { label: 'item6', link: '/item6' },
   // Add more items as needed
 ];
-  
-const Navbar: React.FC = () => {
+
+interface Prop{
+  tokenStr: string|null;
+  removeToken : ()=>void;
+}
+
+const Navbar: React.FC<Prop> = (prop) => {
   return (
     <nav className="bg-tea-800 p-10 text-sm"> 
       <ul className="flex flex-row text-center items-center">
@@ -58,7 +63,7 @@ const Navbar: React.FC = () => {
 
         {/* Profile Dropdown */}
         <li className="basis-[3%] flex justify-end items-center">
-            <ProfileDropdown />
+          <ProfileDropdown tokenStr={prop.tokenStr} removeToken={prop.removeToken}/>
         </li>
 
         {/* Search Bar */}

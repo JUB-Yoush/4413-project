@@ -23,8 +23,9 @@ interface ButtonProps extends BaseButtonAttributes {
 
 const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
     // destructure necessary props
-    const { type, children, buttonStyle,
-            className, buttonVariant, disabled = false,
+    const { type, children, onClick,
+            buttonStyle, className,
+            buttonVariant, disabled = false,
             ...rest } = props;
 
     const renderButtonVariant=()=>{
@@ -42,6 +43,7 @@ const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
             className={renderButtonVariant()}
             {...rest}
             type={type ? "submit" : "button"}
+            onClick={onClick}
             ref={ref}
         >
             {children}

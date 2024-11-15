@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import person from '../assets/person.svg';
 
-const ProfileDropdown = () => {
+interface Prop{
+    tokenStr: string|null;
+    removeToken : ()=>void;
+}
+const ProfileDropdown: React.FC<Prop> = (prop) => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(true); // Simulate login state
+    const checkLoggedIn = !(!prop.tokenStr && prop.tokenStr !== "");
 
     const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
     const closeDropdown = () => setDropdownOpen(false); // Function to close dropdown
+
+    function logOut() {
+        prop.removeToken();
+        alert("You have been signed out");
+    }
 
     return (
         <div className="relative">
@@ -25,7 +34,7 @@ const ProfileDropdown = () => {
             {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 bg-cream text-black border border-camel shadow-md w-40 z-50">
                     <ul className="flex flex-col">
-                        {isLoggedIn ? (
+                        {checkLoggedIn ? (
                             // Logged-in dropdown
                             <>
                                 <li
@@ -43,8 +52,8 @@ const ProfileDropdown = () => {
                                 <button
                                     className="block w-full h-full px-3 py-1 hover:text-white hover:font-medium hover:bg-camel"
                                     onClick={() => {
-                                        setIsLoggedIn(false);
-                                        closeDropdown(); 
+                                        logOut();
+                                        closeDropdown();
                                     }}
                                 >
                                     Sign Out
@@ -63,7 +72,7 @@ const ProfileDropdown = () => {
                                     className="hover:text-white hover:font-medium hover:bg-camel"
                                     onClick={closeDropdown} 
                                 >
-                                    <Link to="/login" className="block w-full h-full px-3 py-1" onClick={() => setIsLoggedIn(true)}>Sign In</Link>
+                                    <Link to="/login" className="block w-full h-full px-3 py-1" >Sign In</Link>
                                 </li>
                             </>
                         )}

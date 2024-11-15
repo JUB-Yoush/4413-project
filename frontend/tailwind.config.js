@@ -11,6 +11,9 @@ module.exports = {
         camel: '#D4A373',
         tea:  '#CCD5AE',
         cream: '#FAEDCD',
+        pink: '#E26873',
+        beige: '#FEFAE0',
+        browntea: '#E9EDC9',
       },
       fontSize: {
         xs: '0.8rem',

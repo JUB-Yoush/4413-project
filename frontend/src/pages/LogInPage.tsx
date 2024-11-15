@@ -3,26 +3,72 @@ import Googollogo from "../assets/Googollogo.png";
 import Logo from "../components/Logo.tsx";
 import Button from "../components/Button.tsx";
 
-const LogInPage: React.FC = () => {
+import {useState} from 'react';
+import axios from 'axios';
+
+interface Token{
+    setToken: React.Dispatch<React.SetStateAction<string | null>>; //is passed from App.tsx to manage session
+}
+const LogInPage: React.FC<Token> = (setToken) => {
+
+    // login form state starts with email and password as empty strings
+    const [loginForm, setLoginForm]
+        = useState({email: "", password:""});
+    function logIn(event) {
+        // handle sending info to flask once the form is submitted
+        axios({
+            method: "post",
+            baseURL: 'http://127.0.0.1:5000', //can replace with personal port
+            url: "/login", //flask route that handles login auth
+            data: {
+                email: loginForm.email,
+                password: loginForm.password,
+            }
+        }).then((response) => {
+            console.log("log in run"+loginForm.email);
+            setToken.setToken(response.data.access_token);
+            window.location.href = "/"; //redirect them to merch page
+        }).catch((error) => {
+            if (error.response) {
+                console.log(error.response);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            }
+        })
+
+        setLoginForm(({
+            email: "",
+            password:""
+        }))
+        event.preventDefault();
+    }
+
+    function handleChange(event) {
+        // handle updating the loginForm state whenever a field changes
+        const {value, name} = event.target
+        setLoginForm(prevNote => ({
+            ...prevNote, [name]: value})
+    )}
+
     return (
-    <form className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
+    <form className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" method={"post"}>
         <Logo size={48}></Logo>
         <div className="mb-4">
             <label
                 htmlFor={"email"}>Email Address</label>
             <input
-                type={"email"} placeholder={""}
+                id={"email"} name={"email"} value={loginForm.email} type={"email"} onChange={handleChange} placeholder={""} autoComplete={"on"}
                 className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
         </div>
         <div className="mb-4 w-full">
             <label
                 htmlFor={"password"}>Password</label>
             <input
-                type={"password"} placeholder={""}
+                id={"password"} name={"password"} value={loginForm.password} type={"password"} onChange={handleChange} placeholder={""} autoComplete={"on"}
                 className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
         </div>
         <div className="mb-4 w-full grid justify-center items-center">
-            <Button type={"submit"} >Log In</Button>
+            <Button type={"submit"} onClick={logIn} >Log In</Button>
         </div>
 
         <hr className={"border-camel mt-10 mb-10"}/>

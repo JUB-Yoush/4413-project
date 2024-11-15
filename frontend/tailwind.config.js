@@ -9,6 +9,7 @@ module.exports = {
 
       colors: {
         camel: '#D4A373',
+        coffee: '#7F6145',
         tea:  '#CCD5AE',
         cream: '#FAEDCD',
         pink: '#E26873',

@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; 
 import ProfileDropdown from './ProfileDropdown';
 import CartDropdown from './CartDropdown';
-import React from "react";
+import Logo from "./Logo.tsx";
 
 // Define a type for the navigation links
 interface NavLink {
@@ -11,7 +12,7 @@ interface NavLink {
   
 // Sample navigation links
 const navLinks: NavLink[] = [
-  { name: 'Merch', href: '/' },
+  { name: 'Merch', href: '/catalog/products' },
   { name: 'Tour Dates', href: '/tour' },
   { name: 'Contact', href: '/contact' }
 ];
@@ -29,15 +30,23 @@ const cartItems = [
 interface Prop{
   tokenStr: string|null;
   removeToken : ()=>void;
+  onSearch: (query: string) => void
 }
 
 const Navbar: React.FC<Prop> = (prop) => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    prop.onSearch(value);
+  };
   return (
-    <nav className="bg-tea-800 p-10 text-sm"> 
+    <nav className="bg-cream p-10 pb-7 text-sm">
       <ul className="flex flex-row text-center items-center">
         
         {/* DJ WAMP Logo */}
-        <li className="basis-[24%] flex justify-start text-2xl font-['Lexend_Zetta']">DJ WAMP</li>
+        <li className="basis-[24%] flex justify-start">  <Logo size={25}/></li>
 
         {/* Page Links */}
         <li className="basis-[50%] pr-[90px]">
@@ -72,6 +81,8 @@ const Navbar: React.FC<Prop> = (prop) => {
           <input
             type="text"
             className="border border-camel bg-transparent p-1 flex-grow w-full"
+            value={searchTerm}
+            onChange={handleInputChange}
           />
         </li>
       </ul>

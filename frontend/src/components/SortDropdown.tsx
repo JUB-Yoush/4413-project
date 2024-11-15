@@ -1,24 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, memo} from "react";
 
-const SortDropdown = () => {
+
+interface SortOption {
+    label: string;
+    value: string;
+}
+
+interface SortDropdownProps {
+    onSortChange: (sortBy: string, order: string, label: string) => void;
+    selectedOption: string; // Add selectedOption here
+}
+
+const SortDropdown: React.FC<SortDropdownProps> = memo(({ onSortChange, selectedOption }) => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState("Newest");
+    
 
     const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
 
-    const handleOptionSelect = (option) => {
-        setSelectedOption(option.label);
+    const handleOptionSelect = (option: SortOption) => {
+        console.log("Selected Option:", option.label); // Log the selected option
         setDropdownOpen(false);
-        // Optionally, add any sorting function or action here
+    
+        const [sortBy, order] = option.value.split("-");
+        console.log("sortBy:", sortBy);
+        console.log("order:", order);
+        onSortChange(sortBy, order, option.label);
     };
 
     const options = [
-        { label: "Price (low to high)", value: "low-to-high" },
-        { label: "Price (high to low)", value: "high-to-low" },
-        { label: "Newest", value: "newest" },
-        { label: "Oldest", value: "oldest" }
+        { label: "Price (low to high)", value: "price-asc" },
+        { label: "Price (high to low)", value: "price-desc" },
+        { label: "Product name", value: "name-asc" },
+        { label: "Album", value: "album-asc" },
+        { label: "Product category", value: "category-asc" }
     ];
 
+    console.log("SortDropdown rendered with selectedOption:", selectedOption);
     return (
         <div className="relative inline-flex items-center space-x-2">
           <span className="whitespace-nowrap">Sort by:</span> 
@@ -50,6 +67,6 @@ const SortDropdown = () => {
             )}
         </div>
     );
-};
+});
 
 export default SortDropdown;

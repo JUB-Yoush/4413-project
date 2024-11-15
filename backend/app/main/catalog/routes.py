@@ -24,11 +24,13 @@ def get_products():
         # build query
         query = Q()
         if category:
-            query &= Q(category__icontains=category)
+            category_list= category.split(",")
+            query &= Q(category__in=category_list)  # OR logic
         if brand:
             query &= Q(brand__icontains=brand)
         if album:
-            query &= Q(album__icontains=album)
+            album_list = album.split(",")
+            query &= Q(album__in=album_list)  # OR logic
         if name:
             query &= Q(name__icontains=name)
         if min_price:

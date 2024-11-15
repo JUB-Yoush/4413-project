@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
-import Sidebar from "../components/Sidebar"; 
+import Sidebar from "../components/SidebarRetired";
 import CatalogProduct from "../components/CatalogProduct";
 import SortDropdown from "../components/SortDropdown";
 import Button from "../components/Button";
 import axios from "axios";
-import { Product } from "../types";
+import { Product } from '../types'; 
 
 interface MerchPageProps {
-  searchQuery: string; // Passed from the navbar
+  searchQuery: string;
 }
 
 const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
@@ -23,49 +22,47 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
 
   // Filtering state
   const [selectedAlbums, setSelectedAlbums] = useState<Record<string, boolean>>({});
-  const [searchParams] = useSearchParams();
-  const categoryFilter = searchParams.get("category");
-  const currentCategory = categoryFilter || "All Products";
+  const [selectedCategories, setSelectedCategories] = useState<Record<string, boolean>>({});
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     setError("");
 
     const selectedAlbumKeys = Object.keys(selectedAlbums).filter((key) => selectedAlbums[key]);
+    const selectedCategoryKeys = Object.keys(selectedCategories).filter((key) => selectedCategories[key]);
 
     const queryParams = [
-      searchQuery ? `name=${encodeURIComponent(searchQuery)}` : "",
+      searchQuery ? `name=${searchQuery}` : "",
       `sort_by=${sortBy}`,
       `order=${order}`,
       selectedAlbumKeys.length > 0 ? `album=${selectedAlbumKeys.join(",")}` : "",
-      categoryFilter ? `category=${encodeURIComponent(categoryFilter)}` : "",
+      selectedCategoryKeys.length > 0 ? `category=${selectedCategoryKeys.join(",")}` : "",
     ]
-      .filter(Boolean)
+      .filter((param) => param !== "")
       .join("&");
 
-      console.log("Query Parameters:", queryParams);
     try {
       const response = await axios.get<{ products: Product[] }>(
         `http://127.0.0.1:5000/catalog/products${queryParams ? `?${queryParams}` : ""}`
       );
       setProducts(response.data.products);
+      setLoading(false);
     } catch (err: any) {
       console.error("Error fetching products:", err.message || err);
       setError("Failed to load products. Please try again.");
-    } finally {
       setLoading(false);
     }
-  }, [searchQuery, sortBy, order, selectedAlbums, categoryFilter]);
+  }, [searchQuery, sortBy, order, selectedAlbums, selectedCategories]);
 
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts, searchParams]);
+  }, [fetchProducts]);
 
-  const handleSortChange = (sortBy: string, order: string, label: string) => {
+  const handleSortChange = useCallback((sortBy: string, order: string, label: string) => {
     setSortBy(sortBy);
     setOrder(order);
     setSelectedOption(label);
-  };
+  }, []);
 
   const handleAlbumChange = (album: string) => {
     setSelectedAlbums((prev) => ({
@@ -74,26 +71,37 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
     }));
   };
 
-  const clearFilters = () => {
-    setSelectedAlbums({});
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
   };
 
-  if (loading) return <p>Loading..</p>;
+  const clearFilters = () => {
+    setSelectedAlbums({});
+    setSelectedCategories({});
+  };
+
+  if (loading) return <p></p>;
   if (error)
     return (
-      <div className="text-center">
+      <div>
         <p>{error}</p>
-        <Button onClick={fetchProducts} className="mt-4">
-          Retry
-        </Button>
+        <button onClick={fetchProducts}>Retry</button>
       </div>
     );
 
   return (
     <div className="flex mt-4">
       {/* Sidebar for filtering */}
-      <div className="border-r border-r-camel mb-10">
-        <Sidebar selectedAlbums={selectedAlbums} onAlbumChange={handleAlbumChange} />
+      <div className="border-r border-r-camel">
+        <Sidebar
+          selectedAlbums={selectedAlbums}
+          selectedCategories={selectedCategories}
+          onAlbumChange={handleAlbumChange}
+          onCategoryChange={handleCategoryChange}
+        />
         <Button onClick={clearFilters} className="text-sm mt-2 ml-[55px]">
           Clear Filters
         </Button>
@@ -101,31 +109,29 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
 
       {/* Main section */}
       <div className="flex-grow ml-[45px] mr-[200px]">
-        <div className="text-2xl">Merch Store - {currentCategory} </div>
+        <div className="text-2xl">Merch Page</div>
 
-        <div className="flex justify-between items-center pt-2 py-5">
+        <div className="flex justify-between items-center py-5">
           <div>Showing {products.length} products</div>
           <SortDropdown onSortChange={handleSortChange} selectedOption={selectedOption} />
         </div>
 
         {/* Product grid */}
-          <div className="mb-10">
-            <div
-              className="grid gap-3"
-              style={{
-                gridTemplateColumns: "repeat(auto-fit, minmax(230px, 0.3fr))",
-              }}
-              >
-              {products.map((product) => (
-                <CatalogProduct key={product.id} product={product} />
-              ))}
+        <div
+          className="grid gap-3 pt-0"
+          style={{
+            gridTemplateColumns: "repeat(auto-fit, minmax(230px, 0.3fr))",
+          }}
+        >
+          {products.map((product) => (
+            <div className="p-0 pb-8" key={product.id}>
+              <CatalogProduct product={product}/>
             </div>
-          </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
 export default MerchPage;
-
-

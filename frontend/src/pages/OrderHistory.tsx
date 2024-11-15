@@ -1,6 +1,6 @@
 import React from 'react';
 import AccountSidebar from "../components/AccountSidebar.tsx";
-import OrderedItem from "../components/OrderedItem.tsx";
+import Order from "../components/Order.tsx";
 
 interface Prop{
     tokenStr: string|null;
@@ -8,17 +8,11 @@ interface Prop{
     setToken: (userToken: string) => void;
 }
 const OrderHistory: React.FC<Prop> = (prop) => {
-    const products = [
-        { id: 1, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
-        { id: 2, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
-        { id: 3, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
-        { id: 4, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
-        { id: 5, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
-        { id: 6, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
-        { id: 7, name: 'Product 1', cost: '$25', image: 'butterfly.jpg' },
-        { id: 8, name: 'Product 2', cost: '$35', image: 'butterfly.jpg' },
-        { id: 9, name: 'Product 3', cost: '$45', image: 'butterfly.jpg' },
-        // Add more products here
+    const orders = [
+        { k:1, id: "123456789", date: 'November 13, 2024', total:128, cc: "************1234"},
+        { k:2, id: "234567891", date: 'November 1, 2024', total:32.00, cc: "************1234"},
+        { k:3, id: "345678912", date: 'October 13, 2024', total:128.00, cc: "************1234"},
+        { k:4, id: "456789123", date: 'September 13, 2024', total:32.00, cc: "************1234"},
     ];
     return (
         <div className={"flex mt-4"}>
@@ -29,16 +23,35 @@ const OrderHistory: React.FC<Prop> = (prop) => {
 
                 {/*Ordered items history*/}
                 <div className="">
-                {products.map((product) => (
-                    <div className="p-0 pb-8" key={product.id}>
-                        <OrderedItem
-                            name={product.name}
-                            cost={product.cost}
-                            image={product.image}
-                        />
-                    </div>
-                ))}
+                    {orders.map((order) => (
+                        <div className="pb-8" key={order.k}>
+                            <Order
+                                id={order.id}
+                                date={order.date}
+                                total={order.total}
+                                cc={order.cc}
+                            />
+                        </div>
+                    ))}
                 </div>
+
+
+
+
+
+                {/*<div className="">*/}
+                {/*{products.map((product) => (*/}
+                {/*    <div className="pb-8" key={product.id}>*/}
+                {/*        <OrderedItem*/}
+                {/*            name={product.name}*/}
+                {/*            cost={product.cost}*/}
+                {/*            image={product.image}*/}
+                {/*            qty={product.qty}*/}
+                {/*            total={product.qty*product.cost}*/}
+                {/*        />*/}
+                {/*    </div>*/}
+                {/*))}*/}
+                {/*</div>*/}
             </div>
         </div>
     );

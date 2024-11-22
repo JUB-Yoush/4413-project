@@ -3,7 +3,7 @@ import datetime
 import jwt
 from . import catalog
 import bcrypt
-from app.models import Product, json_formatted
+from app.models import Product
 from mongoengine import Q
 from ...auth.session import admin_required
 
@@ -45,7 +45,7 @@ def get_products():
 
         products_json = []
         for product in products:
-            products_json.append(json_formatted(product))
+            products_json.append(product.json_formatted())
 
         return jsonify({"products": products_json}), 201
     except Exception as e:
@@ -77,9 +77,21 @@ def add_product():
 def get_product(product_id):
     try:
         product = Product.objects.get(id=product_id)
-        product_json = product.to_mongo().to_dict()
-        product_json["id"] = str(product_json["_id"])
-        del product_json["_id"]
-        return jsonify(product_json), 201
+        return jsonify(product.json_formatted()), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@catalog.route("/products/<product_id>", methods=["PATCH"])
+@admin_required
+def edit_product(product_id):
+    data = request.json
+    try:
+        product = Product.objects.get(id=product_id)
+        for key, value in data.items():
+            if hasattr(product, key):
+                setattr(product, key, value)
+        product.save()
+        return jsonify({"message": "updated product"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500

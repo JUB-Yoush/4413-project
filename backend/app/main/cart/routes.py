@@ -1,30 +1,24 @@
 from flask import jsonify, request
 
-from app.auth.session import get_user_from_token
-from app.models import CartItem, Product, User, json_formatted
+from app.auth.session import (
+    get_user_from_token,
+    user_required,
+    get_referenced_user,
+    user_or_admin_required,
+)
+from app.models import CartItem, Product, User
 from mongoengine import DoesNotExist
 from . import cart
 
 
+# shouldn't require user
 @cart.route("/", methods=["GET"])
+@user_or_admin_required
 def get_cart():
     token = request.headers.get("Authorization")
-    # check if token exists
-    if not token:
-        return jsonify({"error": "NO SESSION TOKEN"}), 401
     payload = get_user_from_token(token)
-
-    # check if user exists
-    if not payload:
-        return jsonify({"error": "INVALID SESSION TOKEN"}), 401
-
     # get user from token
-    user = User.objects(email=payload["email"]).first()
-
-    # if a user was not found
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-
+    user = get_referenced_user(payload)
     cart_items = []
 
     for item in user.cart_items:
@@ -42,29 +36,17 @@ def get_cart():
     return jsonify({"items": cart_items, "cart_total": user.cart_total}), 200
 
 
+# shouldn't require user
 @cart.route("/", methods=["POST"])
+@user_or_admin_required
 def add_to_cart():
     data = request.json
     token = request.headers.get("Authorization")
     product_id = data["product_id"]
     quantity = data["quantity"]
 
-    # check if token exists
-    if not token:
-        return jsonify({"error": "NO SESSION TOKEN"}), 401
     payload = get_user_from_token(token)
-
-    # check if user exists
-    if not payload:
-        return jsonify({"error": "INVALID SESSION TOKEN"}), 401
-
-    # get user from token
-    user = User.objects(email=payload["email"]).first()
-
-    # if a user was not found
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-
+    user = get_referenced_user(payload)
     # fetch the product
     try:
         product = Product.objects.get(id=product_id)
@@ -97,28 +79,19 @@ def add_to_cart():
     ), 201
 
 
-# Edit a specific cart item's quantity
+# shouldn't require user
 @cart.route("/<product_id>", methods=["PATCH"])
+@user_or_admin_required
 def edit_cart_item_quantity(product_id):
     data = request.json
     token = request.headers.get("Authorization")
     new_quantity = data["quantity"]
-
-    if not token:
-        return jsonify({"error": "NO SESSION TOKEN"}), 401
     payload = get_user_from_token(token)
 
     if new_quantity < 0:
         return jsonify({"error": "Quantity cannot be less than 0"})
 
-    # get user from payload
-    if not payload:
-        return jsonify({"error": "INVALID SESSION TOkEN"}), 401
-
-    user = User.objects(email=payload["email"]).first()
-
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+    user = get_referenced_user(payload)
 
     try:
         for item in user.cart_items:
@@ -131,23 +104,13 @@ def edit_cart_item_quantity(product_id):
         return jsonify({"error editing cart item quantity": str(e)}), 500
 
 
+# shoudn't require user
 @cart.route("/<product_id>", methods=["DELETE"])
+@user_or_admin_required
 def remove_cart_item(product_id):
     token = request.headers.get("Authorization")
-
-    if not token:
-        return jsonify({"error": "NO SESSION TOKEN"}), 401
     payload = get_user_from_token(token)
-
-    # get user from payload
-    if not payload:
-        return jsonify({"error": "INVALID SESSION TOkEN"}), 401
-
-    user = User.objects(email=payload["email"]).first()
-
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-
+    user = get_referenced_user(payload)
     try:
         user.cart_items = [
             item for item in user.cart_items if str(item.product_id.id) != product_id
@@ -159,21 +122,11 @@ def remove_cart_item(product_id):
 
 
 @cart.route("/", methods=["DELETE"])
+@user_or_admin_required
 def clear_cart():
     token = request.headers.get("Authorization")
-
-    if not token:
-        return jsonify({"error": "NO SESSION TOKEN"}), 401
     payload = get_user_from_token(token)
-
-    # get user from payload
-    if not payload:
-        return jsonify({"error": "INVALID SESSION TOkEN"}), 401
-
-    user = User.objects(email=payload["email"]).first()
-
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+    user = get_referenced_user(payload)
 
     user.cart_items = []
     user.update_cart_total()

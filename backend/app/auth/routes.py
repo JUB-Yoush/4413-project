@@ -22,10 +22,10 @@ def signup():
         if User.objects(email=email):
             return jsonify({"error": "This email is already registered!"}), 400
 
-        decryption_key = Fernet.generate_key()
-        cipher = Fernet(decryption_key)
+        decryption_key = Fernet.generate_key().decode("utf-8")
+        cipher = Fernet(decryption_key.encode("utf-8"))
         cc_string = data["card"]
-        encrypted_card = cipher.encrypt(cc_string.encode())
+        encrypted_card = cipher.encrypt(cc_string.encode()).decode("utf-8")
 
         new_user = User(
             fname=data["fname"],

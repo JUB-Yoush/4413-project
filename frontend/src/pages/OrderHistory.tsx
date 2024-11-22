@@ -11,11 +11,11 @@ const OrderHistory: React.FC<Prop> = (prop) => {
     const orders = [
         { k:1, id: "123456789", date: 'November 13, 2024', total:128, cc: "************1234"},
         { k:2, id: "234567891", date: 'November 1, 2024', total:32.00, cc: "************1234"},
-        { k:3, id: "345678912", date: 'October 13, 2024', total:128.00, cc: "************1234"},
-        { k:4, id: "456789123", date: 'September 13, 2024', total:32.00, cc: "************1234"},
+        { k:3, id: "345678912", date: 'October 8, 2024', total:128.00, cc: "************1234"},
+        { k:4, id: "456789123", date: 'September 4, 2024', total:32.00, cc: "************1234"},
     ];
     return (
-        <div className={"flex mt-4"}>
+        <div className={"flex mt-4 mb-10"}>
             <AccountSidebar removeToken={prop.removeToken} ></AccountSidebar>
             <div className="flex-grow px-8 max-w-[900px]">
                 {/*Header*/}

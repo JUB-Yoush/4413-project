@@ -46,7 +46,7 @@ const Navbar: React.FC<Prop> = (prop) => {
       <ul className="flex flex-row text-center items-center">
         
         {/* DJ WAMP Logo */}
-        <li className="basis-[24%] flex justify-start">  <Logo size={25}/></li>
+        <li className="basis-[24%] flex justify-start"> <a href={"/catalog/products"}> <Logo size={25}/></a></li>
 
         {/* Page Links */}
         <li className="basis-[50%] pr-[90px]">

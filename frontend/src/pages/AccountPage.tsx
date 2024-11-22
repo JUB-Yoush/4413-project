@@ -55,7 +55,7 @@ const AccountPage: React.FC<Prop> = (prop) => {
     }
     getData();
     return (
-        <div className={"flex"}>
+        <div className={"flex mb-10"}>
             <AccountSidebar removeToken={prop.removeToken} ></AccountSidebar>
             <div className={"flex-grow px-8 max-w-[900px]"}>
                 <AccountDetails firstname ={accountData.firstname} lastname= {accountData.lastname}

@@ -7,11 +7,11 @@ import Button from "../components/Button";
 import axios from "axios";
 import { Product } from "../types";
 
-interface MerchPageProps {
+interface TourPageProps {
   searchQuery: string; // Passed from the navbar
 }
 
-const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
+const TourPage: React.FC<TourPageProps> = ({ searchQuery }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -25,7 +25,7 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
   const [selectedAlbums, setSelectedAlbums] = useState<Record<string, boolean>>({});
   const [searchParams] = useSearchParams();
   const categoryFilter = searchParams.get("category");
-  const currentCategory = categoryFilter || "All Products";
+  const currentCategory = categoryFilter || "All Tours";
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -101,7 +101,7 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
 
       {/* Main section */}
       <div className="flex-grow ml-[45px] mr-[200px]">
-        <div className="text-2xl">Merch Store - {currentCategory} </div>
+        <div className="text-2xl">Upcoming Tours - {currentCategory} </div>
 
         <div className="flex justify-between items-center pt-2 py-5">
           <div>Showing {products.length} products</div>
@@ -117,7 +117,7 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
               }}
               >
               {products.map((product) => (
-                <CatalogProduct key={product.id} product={product}/>
+                <CatalogProduct key={product.id} product={product} btnLabel={"See options"}/>
               ))}
             </div>
           </div>
@@ -126,6 +126,6 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
   );
 };
 
-export default MerchPage;
+export default TourPage;
 
 

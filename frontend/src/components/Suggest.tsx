@@ -51,7 +51,7 @@ const Suggest: React.FC<SuggestProps> = ({ currentCategory, currentProduct }) =>
                 }}
                 >
                 {products.map((product) => (
-                    <CatalogProduct key={product.id} product={product} />
+                    <CatalogProduct key={product.id} product={product}/>
                 ))}
 
             </div>

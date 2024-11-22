@@ -5,9 +5,10 @@ import { Product } from '../types';
 
 interface CatalogProductProps {
     product: Product;
+    btnLabel?: string;
 }
 
-  const CatalogProduct: React.FC<CatalogProductProps> = ({ product }) => {    
+  const CatalogProduct: React.FC<CatalogProductProps> = ({ product,btnLabel }) => {
 
     const navigate = useNavigate();
     const isNavigating = useRef(false);
@@ -41,7 +42,7 @@ interface CatalogProductProps {
             <Button 
                 onClick={detailClick}
                 className ="w-full mt-3"
-            >View Details</Button>
+            >{btnLabel || "Add to Cart"}</Button>
         </div>
     );
 };

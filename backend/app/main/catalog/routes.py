@@ -24,7 +24,7 @@ def get_products():
         # build query
         query = Q()
         if category:
-            category_list = category.split(",")
+            category_list= category.split(",")
             query &= Q(category__in=category_list)  # OR logic
         if brand:
             query &= Q(brand__icontains=brand)

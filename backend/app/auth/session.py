@@ -99,7 +99,10 @@ def user_or_admin_required(f):
             # Check if the user is an admin
             user = User.objects(email=email).first()
             admin = Admin.objects(email=email).first()
-            if user and (admin is None and User.objects(email=request.json["email"])):
+            if user is None and (
+                admin is None
+                and User.objects(email=request.json.get("email").first() is None)
+            ):
                 return jsonify(
                     {"message": "Invalid user token or no user email provided."}
                 ), 500
@@ -117,7 +120,6 @@ def user_or_admin_required(f):
 
 def get_referenced_user(payload):
     email = payload["email"]
-    data = request.json
 
     # returns either the user in the jwt token or the user referenced in the "user_email" json section if jwt token is an admin.
     # error checking is handled by user_or_admin_required wrapper function
@@ -126,4 +128,5 @@ def get_referenced_user(payload):
     if admin == None:
         return user
     if user == None:
-        return User.objects(email=data["user_email"]).first()
+        data = request.json
+        return User.objects(email=data.get["user_email"]).first()

@@ -1,5 +1,6 @@
 from flask import jsonify, request
 
+
 from app.auth.session import (
     get_user_from_token,
     user_required,
@@ -7,6 +8,7 @@ from app.auth.session import (
     user_or_admin_required,
 )
 from app.models import CartItem, Product, User
+
 from mongoengine import DoesNotExist
 from . import cart
 
@@ -19,6 +21,7 @@ def get_cart():
     payload = get_user_from_token(token)
     # get user from token
     user = get_referenced_user(payload)
+
     cart_items = []
 
     for item in user.cart_items:
@@ -47,6 +50,7 @@ def add_to_cart():
 
     payload = get_user_from_token(token)
     user = get_referenced_user(payload)
+
     # fetch the product
     try:
         product = Product.objects.get(id=product_id)
@@ -86,6 +90,7 @@ def edit_cart_item_quantity(product_id):
     data = request.json
     token = request.headers.get("Authorization")
     new_quantity = data["quantity"]
+
     payload = get_user_from_token(token)
 
     if new_quantity < 0:
@@ -111,6 +116,7 @@ def remove_cart_item(product_id):
     token = request.headers.get("Authorization")
     payload = get_user_from_token(token)
     user = get_referenced_user(payload)
+
     try:
         user.cart_items = [
             item for item in user.cart_items if str(item.product_id.id) != product_id

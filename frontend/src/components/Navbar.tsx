@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; 
 import ProfileDropdown from './ProfileDropdown';
 import CartDropdown from './CartDropdown';
+import CartIcon from './CartIcon';
 import Logo from "./Logo.tsx";
 
 // Define a type for the navigation links

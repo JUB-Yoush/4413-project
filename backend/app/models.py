@@ -44,15 +44,15 @@ class CartItem(EmbeddedDocument):
         return cart_items
 
 
-class Product(Document):
-    name = StringField(required=True)
-    category = StringField()
-    brand = StringField()
-    album = StringField()
-    price = FloatField()
-    description = StringField()
-    image_url = StringField()
-    quantity = IntField()
+# class Product(Document):
+#     name = StringField(required=True)
+#     category = StringField()
+#     brand = StringField()
+#     album = StringField()
+#     price = FloatField()
+#     description = StringField()
+#     image_url = StringField()
+#     quantity = IntField()
 
 
 # CartItem document that's stored in User's cart

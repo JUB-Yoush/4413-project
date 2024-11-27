@@ -12,6 +12,7 @@ import MerchPage from "./pages/MerchPage.tsx";
 import TourPage from "./pages/TourPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import Footer from "./components/Footer.tsx";
+import CartPage from "./pages/CartPage.tsx";
 
 const App: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>(''); // Shared search state
@@ -30,6 +31,7 @@ const App: React.FC = () => {
 
                 <Route path="/catalog/products" element={<MerchPage searchQuery={searchQuery}/>} />
                 <Route path="/catalog/products/:name" element={<DetailPage />} />
+                <Route path="/cart" element={<CartPage />} />
                 <Route path="/tour" element={<TourPage searchQuery={searchQuery}/>} />
                 <Route path="/contact" element={<ContactPage />} />
 

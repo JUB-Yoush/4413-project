@@ -18,12 +18,12 @@ const SortDropdown: React.FC<SortDropdownProps> = memo(({ onSortChange, selected
     const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
 
     const handleOptionSelect = (option: SortOption) => {
-        console.log("Selected Option:", option.label); // Log the selected option
+        // console.log("Selected Option:", option.label); // Log the selected option
         setDropdownOpen(false);
     
         const [sortBy, order] = option.value.split("-");
-        console.log("sortBy:", sortBy);
-        console.log("order:", order);
+        // console.log("sortBy:", sortBy);
+        // console.log("order:", order);
         onSortChange(sortBy, order, option.label);
     };
 
@@ -35,7 +35,7 @@ const SortDropdown: React.FC<SortDropdownProps> = memo(({ onSortChange, selected
         { label: "Product category", value: "category-asc" }
     ];
 
-    console.log("SortDropdown rendered with selectedOption:", selectedOption);
+    // console.log("SortDropdown rendered with selectedOption:", selectedOption);
     return (
         <div className="relative inline-flex items-center space-x-2">
           <span className="whitespace-nowrap">Sort by:</span> 

@@ -6,9 +6,10 @@ import axios from "axios";
 interface SuggestProps {
     currentCategory: string;
     currentProduct: string;
+    columns: number
   }
 
-const Suggest: React.FC<SuggestProps> = ({ currentCategory, currentProduct }) => {
+const Suggest: React.FC<SuggestProps> = ({ currentCategory, currentProduct, columns }) => {
 
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -47,7 +48,7 @@ const Suggest: React.FC<SuggestProps> = ({ currentCategory, currentProduct }) =>
             <div
                 className="grid gap-3 pl-20 h-[calc(100vh-250px)] overflow-y-auto scrollbar-hidden"
                 style={{
-                    gridTemplateColumns: "repeat(1, minmax(200px, 0.9fr))",
+                    gridTemplateColumns: `repeat(${columns}, minmax(200px, 0.9fr))`,
                 }}
                 >
                 {products.map((product) => (

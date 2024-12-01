@@ -1,14 +1,25 @@
-import React, { useEffect } from "react"; // Import useEffect
+import React, { useState, useEffect } from "react";
+
+import { useTokenContext } from "../TokenContext"; // Access user token
+import { Product } from "../types"; // Adjust path as needed
+
+const TestPage: React.FC = () => {
+    const { token } = useTokenContext(); // Retrieve the token
 
 
-function TestPage() {
+
+    return (
+        <div className="p-4">
+            <h1 className="text-xl font-bold">Test Page</h1>
+            {token ? (
+                <p className="text-green-500">User is logged in. TOKEN: {token}</p>
+            ) : (
+                <p className="text-red-500">User is not logged in.</p>
+            )}
 
 
-  return (
-    <div>
-      hello world
-    </div>
-  );
-}
+        </div>
+    );
+};
 
 export default TestPage;

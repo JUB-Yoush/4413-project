@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { CartItem, updateCart, getCart } from '../cart/CartUtility'; 
+import { useCartContext } from '../cart/CartContext';
 import QuantityControl from '../components/QuantityControl.tsx';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button.tsx';
+import { CartItem } from "../types.ts";
 
 interface CartDropdownItemProps {
-    item: CartItem;
+    item: CartItem; 
     closeDropdown: () => void;
-    onUpdate: () => void;
 }
 
-const CartDropdownItem: React.FC<CartDropdownItemProps> = ({ item, closeDropdown, onUpdate }) => {
-    const [selectedQuantity, setSelectedQuantity] = useState<number>(item.quantity);
-    const [product, setProduct] = useState<CartItem | null>(null);
+const CartDropdownItem: React.FC<CartDropdownItemProps> = ({ item, closeDropdown}) => {
+    const [product, setProduct] = useState<any | null>(null); 
+    const { cartItems, handleUpdateCart, refreshCart, handleRemoveFromCart } = useCartContext(); 
     
 
     // Necessary fetch of the full product in order for it to be saved as a state and be sent when clicked on the product in the cart
@@ -32,27 +32,40 @@ const CartDropdownItem: React.FC<CartDropdownItemProps> = ({ item, closeDropdown
         fetchFullProduct();
     }, [item.name]);
 
+    // Handle cart updates
+    const handleQuantityChange = async (productId: string, newQuantity: number) => {
+        try {
+            const cartItem = cartItems.find((item) => item.product_id === productId);
+            if (!cartItem) {
+                console.error("Cart item not found for product_id:", productId);
+                return;
+            }
+
+            await handleUpdateCart(productId, newQuantity);
+            await refreshCart(); // Refresh cart data
+        } catch (error) {
+            console.error("Failed to update cart:", error);
+        }
+    };
+
+    const handleRemove = async (productId: string) => {
+        try {
+            const cartItem = cartItems.find((item) => item.product_id === productId);
+            if (!cartItem) {
+                console.error("Cart item not found for product_id:", productId);
+                return;
+            }
+            await handleRemoveFromCart(productId);
+            await refreshCart(); // Refresh cart data
+        } catch (error) {
+            console.error("Failed to update cart:", error);
+        }
+    };
+
+
     if (!product) {
         return <div>Loading...</div>; // Show a loading indicator until data is fetched
     }
-
-
-    const handleUpdateCart = () => {
-        console.log(`Adding ${selectedQuantity} of ${item.name} to the cart.`);
-        const totalPrice = selectedQuantity * item.price;
-
-        updateCart({
-            product_id: item.product_id,
-            name: item.name,
-            price: item.price,
-            total_price: totalPrice,
-            quantity: selectedQuantity,
-            image_url: item.image_url,
-        });
-
-        console.log('Cart Contents:', getCart());
-        onUpdate();
-    };
 
     // const location = useLocation();
     // console.log('Location State:', location.state); 
@@ -81,15 +94,17 @@ const CartDropdownItem: React.FC<CartDropdownItemProps> = ({ item, closeDropdown
                     <span className="font-bold">{item.name}</span>
                 </Link>
                 <div className="ml-3 flex flex-col text-sm">
-                        <QuantityControl
-                            quantity={selectedQuantity}
-                            setQuantity={setSelectedQuantity}
-                        />
+                    <QuantityControl
+                        quantity={item.quantity}
+                        setQuantity={(newQuantity) =>
+                            handleQuantityChange(item.product_id, newQuantity)
+                        }
+                    />
 
                         <div className="mr-6 flex items-center justify-between flex-row">
                             <div>Price: ${item.price.toFixed(2)}</div>
                             <div>
-                                <Button onClick={handleUpdateCart} className="mt-0 px-1 py-0.5 ">Update</Button>
+                                <Button onClick={() => handleRemove(item.product_id)} className="mt-0 px-1 py-0.5 ">Remove</Button>
                             </div>
                         </div>
                     </div>

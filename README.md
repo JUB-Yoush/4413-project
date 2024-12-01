@@ -5,12 +5,12 @@
 Before any method: Clone the repo.
 
 ```
-git clone git@github.com:EECS3311F24/project-wabi-sabi.git
+git clone git@github.com/JUB-Yoush/4413-project.git
 ```
 
 ### Quickstart (running within the container)
 
-Wabisabi is Containerized with **Docker**, so running it is easy:
+4413 Project is Containerized with **Docker**, so running it is easy:
 
 1. Install: 
 - [Docker](https://docs.docker.com/engine/install/) 
@@ -19,7 +19,7 @@ Wabisabi is Containerized with **Docker**, so running it is easy:
 2. Clone the repo.
 
 ```
-git clone git@github.com:EECS3311F24/project-wabi-sabi.git
+git clone git@github.com/JUB-Yoush/4413-project.git
 ```
 
 3. cd into the project root and run the docker compose file.
@@ -44,7 +44,7 @@ docker-compose up
 2. Then install dependencies
 
 ```
-cd project-wabi-sabi/frontend
+cd project-4413-project/frontend
 
 bun install
 ```

@@ -9,3 +9,17 @@ export interface Product {
     image_url: string;     // URL for the product's image
     quantity: number;      // Stock quantity
 }
+
+export interface CartItem {
+    product_id: string;
+    name: string;
+    price: number;
+    total_price: number;
+    quantity: number;
+    image_url: string;
+}
+
+export interface Cart {
+    cart_total: number;
+    items: CartItem[];
+}

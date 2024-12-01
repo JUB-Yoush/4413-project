@@ -7,7 +7,7 @@ interface QuantityControlProps {
 }
 const QuantityControl: React.FC<QuantityControlProps> = ({ quantity, setQuantity, hideLabel }) => {
     const increment = () => setQuantity(quantity + 1);
-    const decrement = () => setQuantity(quantity > 0 ? quantity - 1 : 0);
+    const decrement = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
     return (
         <div className="flex items-center space-x-4">

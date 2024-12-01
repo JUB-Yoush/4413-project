@@ -13,6 +13,8 @@ import TourPage from "./pages/TourPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import Footer from "./components/Footer.tsx";
 import CartPage from "./pages/CartPage.tsx";
+import LogInPageContextToken from "./pages/LogInPageContextToken.tsx";
+
 
 import Dashboard from "./pages/Admin/Dashboard.tsx";
 import RouteNotFound from "./pages/RouteNotFound.tsx";
@@ -59,6 +61,7 @@ const App: React.FC = () => {
                     <Route path="/catalog/products/:name" element={<DetailPage />} />
                     <Route path="/cart" element={<CartPage />} />
                     <Route path="/tour" element={<TourPage searchQuery={searchQuery}/>} />
+                    <Route path="/login" element={<LogInPageContextToken />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="*" element={<RouteNotFound />} />
 

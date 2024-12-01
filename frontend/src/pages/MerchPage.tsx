@@ -28,7 +28,8 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
   // Single category filter
   const categoryFilter = searchParams.get("category");
   const currentCategory = categoryFilter || "All Products";
-  // Muli-album filter
+  
+  // Multi-album filter
   const albumFilter = searchParams.get("albums");
   const [selectedAlbums, setSelectedAlbums] = useState<Record<string, boolean>>(() => {
     const albums = albumFilter ? albumFilter.split(",") : [];
@@ -176,7 +177,7 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
 
       {/* Main section */}
       <div className="flex-grow ml-[45px] mr-[200px]">
-        <div className="text-2xl">Merch Store - {currentCategory} </div>
+        <div className="text-xl"  style={{fontFamily: "'Lexend Zetta', sans-serif"}}>MERCH STORE - {currentCategory} </div>
 
         <div className="flex justify-between items-center pt-2 py-5">
           <div>Showing {products.length} products</div>

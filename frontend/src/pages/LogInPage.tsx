@@ -25,7 +25,7 @@ const LogInPage: React.FC<Token> = (setToken) => {
                 password: loginForm.password,
             }
         }).then((response) => {
-            console.log("log in run"+loginForm.email);
+            console.log("log in run "+loginForm.email);
             setToken.setToken(response.data.access_token);
             window.location.href = "/"; //redirect them to merch page
         }).catch((error) => {

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import AccountDetails from "../components/AccountDetails.tsx";
 import AccountSidebar from "../components/AccountSidebar.tsx";
-import axios from "axios";
+import axios, {defaults} from "axios";
 
 interface Prop{
     tokenStr: string|null;
@@ -23,15 +23,24 @@ const AccountPage: React.FC<Prop> = (prop) => {
             postal: "N1M 2O4"
     });
     function getData(){
+        // axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
         axios({
             method: "get",
             baseURL: 'http://127.0.0.1:5000', //can replace with personal port
-            url: "/account", //needs to be updated with account api endpoint
-            headers:{
-                Authorization: "Bearer "+ prop.tokenStr,
-            }
+            url: "/user",
+            // headers:{
+            //     // Authorization: `Bearer ${prop.tokenStr}`,
+            //     // Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZG9tYWluLmNvbSJ9.Qh7AJsBuMGLLqy3_nX8ophZST0hHt3VPMkPuvpD3nSM`,
+            //     // 'content-type': 'application/json',
+            //     // Accept: '*/*',
+            // },
+            // added the below to see if it makes the call work but naurp
+            // data: {
+            //     message: "hello"
+            // }
         }).then((response) =>{
             const resp = response.data;
+            console.log("frist "+resp.fname);
             resp.access_token && prop.setToken(resp.access_token); //
             setAcctData(({
                 firstname: resp.fname,

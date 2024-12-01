@@ -6,7 +6,7 @@ from database import get_database
 def create_app(testing=False):
     print("creating blueprint")
     app = Flask(__name__)
-    cors = CORS(app)
+    cors = CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}}),
     app.config["CORS_HEADERS"] = "Content-Type"
     app.config["TESTING"] = testing
 

@@ -1,5 +1,4 @@
 from flask import render_template, redirect, url_for, request, jsonify
-import datetime
 import jwt
 from . import catalog
 import bcrypt

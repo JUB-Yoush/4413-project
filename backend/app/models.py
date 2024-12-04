@@ -26,23 +26,15 @@ class CartItem(EmbeddedDocument):
     quantity = IntField(default=1)
 
     def json_formatted(self):
-        print(f"serializing {self.__str__}")
-        cart_items = []
-
-        for item in user.cart_items:
-            product = Product.objects.get(id=item.product_id.id)
-            cart_items.append(
-                {
-                    "product_id": str(product.id),
-                    "name": product.name,
-                    "price": product.price,
-                    "total_price": product.price * item.quantity,
-                    "quantity": item.quantity,
-                    "image_url": product.image_url,
-                }
-            )
-        return cart_items
-
+        product = Product.objects.get(id=self.product_id.id)
+        return {
+                "product_id": str(product.id),
+                "name": product.name,
+                "price": product.price,
+                "total_price": product.price * self.quantity,
+                "quantity": self.quantity,
+                "image_url": product.image_url,
+            }
 
 # class Product(Document):
 #     name = StringField(required=True)
@@ -55,7 +47,8 @@ class CartItem(EmbeddedDocument):
 #     quantity = IntField()
 
 
-# CartItem document that's stored in User's cart
+# # CartItem document that's stored in User's cart
+
 # class CartItem(EmbeddedDocument):
 #     product_id = ReferenceField(Product, required=True)
 #     quantity = IntField(default=1)
@@ -105,6 +98,9 @@ class User(Document):
         model_json = self.to_mongo().to_dict()
         model_json["id"] = str(model_json["_id"])
         del model_json["_id"]
+        model_json["cart_items"] = [
+            cart_item.json_formatted() for cart_item in self.cart_items
+        ]
         return model_json
 
     def update_cart_total(self):
@@ -130,7 +126,7 @@ class Admin(Document):
 
 
 class Sale(Document):
-    date = DateField(required=True)
+    date = DateTimeField(required=True)
     user = ReferenceField(User)
     purchases = ListField(EmbeddedDocumentField(CartItem), required=True)
     approved = BooleanField(required=True)

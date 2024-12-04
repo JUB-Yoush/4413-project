@@ -1,16 +1,14 @@
 import React from 'react';
-import Googollogo from "../assets/Googollogo.png";
-import Logo from "../components/Logo.tsx";
-import Button from "../components/Button.tsx";
+import Googollogo from "../../assets/Googollogo.png";
+import Logo from "../../components/Logo.tsx";
+import Button from "../../components/Button.tsx";
 
 import {useState} from 'react';
 import axios from 'axios';
-import {useTokenContext} from "../components/TokenContext.tsx";
-import {useCartContext} from "../cart/CartContext.tsx";
+import {useTokenContext} from "../../components/TokenContext.tsx";
 
-const LogInPage: React.FC = () => {
+const AdminLogInPage: React.FC = () => {
     const {setToken, setUserType} = useTokenContext();
-    const { handleCartMergeOnLogin } = useCartContext();
 
     // login form state starts with email and password as empty strings
     const [loginForm, setLoginForm]
@@ -21,17 +19,16 @@ const LogInPage: React.FC = () => {
         axios({
             method: "post",
             baseURL: 'http://127.0.0.1:5000', //can replace with personal port
-            url: "/login", //flask route that handles login auth
+            url: "/admin/login", //flask route that handles login auth
             data: {
                 email: loginForm.email,
                 password: loginForm.password,
             }
-        }).then(async (response) => {
+        }).then((response) => {
             console.log("log in run " + loginForm.email);
             setToken(response.data.token);
-            setUserType("user");
-            await handleCartMergeOnLogin();
-            window.location.href = "/"; //redirect them to merch page
+            setUserType("admin");
+            // window.location.href = "/admin"; //redirect them to dashboard
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response);
@@ -57,8 +54,10 @@ const LogInPage: React.FC = () => {
     }
 
     return (
-        <form className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" method={"post"}>
+        <div className={"min-w-full flex-grow"}>
+        <form className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" method={"post"}>
             <Logo size={48}></Logo>
+            <p className="flex mb-4 justify-center">Admin</p>
             <div className="mb-4">
                 <label
                     htmlFor={"email"}>Email Address</label>
@@ -81,7 +80,7 @@ const LogInPage: React.FC = () => {
 
             <hr className={"border-camel mt-10 mb-10"}/>
             <div className="grid grid-cols-1 gap-4 place-items-center">
-                <p>Don't have an account? <a href={"/signup"}
+                <p>Don't have an account? <a href={"/admin/signup"}
                                              className={"font-normal underline text-camel hover:font-extrabold"}>
                     Sign Up</a></p>
                 <p>Log In With:</p>
@@ -93,7 +92,8 @@ const LogInPage: React.FC = () => {
                 </div>
             </div>
         </form>
+        </div>
     );
 };
 
-export default LogInPage;
+export default AdminLogInPage;

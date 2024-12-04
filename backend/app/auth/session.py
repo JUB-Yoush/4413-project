@@ -128,5 +128,4 @@ def get_referenced_user(payload):
     if admin == None:
         return user
     if user == None:
-        data = request.json
-        return User.objects(email=data.get["user_email"]).first()
+        return admin

@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
-import Googollogo from "../assets/Googollogo.png";
-import Logo from "../components/Logo.tsx";
-import Button from "../components/Button.tsx";
+import Googollogo from "../../assets/Googollogo.png";
+import Logo from "../../components/Logo.tsx";
+import Button from "../../components/Button.tsx";
 import axios from "axios";
 
-
-const SignUpPage: React.FC = () => {
+const AdminSignUpPage: React.FC = () => {
 
     // form state starts with fields as empty strings
     const [signUpForm, setSignUpForm]
@@ -26,7 +25,7 @@ const SignUpPage: React.FC = () => {
         axios({
             method: "post",
             baseURL: 'http://127.0.0.1:5000', //can replace with personal port
-            url: "/signup", //flask route that handles signup auth
+            url: "/admin/signup", //flask route that handles signup auth
             data: {
                 email: signUpForm.email,
                 password: signUpForm.password,
@@ -40,7 +39,7 @@ const SignUpPage: React.FC = () => {
             }
         }).then(async () => {
             console.log("sign up run" + signUpForm.email +". Now log in.");
-            window.location.href = "/login"; //redirect them to merch page
+            window.location.href = "/admin"; //redirect them to merch page
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response);
@@ -71,8 +70,9 @@ const SignUpPage: React.FC = () => {
         )}
 
     return (
-        <form className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
+        <form className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
             <Logo size={48}></Logo>
+            <p className="flex mb-4 justify-center">Admin</p>
             <div className="mb-4 w-full">
                 <label
                     htmlFor={"fname"}>First Name</label>
@@ -107,7 +107,7 @@ const SignUpPage: React.FC = () => {
 
             <hr className={"border-camel mt-10 mb-10"}/>
             <div className="grid grid-cols-1 gap-4 place-items-center">
-                <p>Already have an account? <a href={"/login"} className={"font-normal underline text-camel hover:font-extrabold"}>
+                <p>Already have an account? <a href={"/admin"} className={"font-normal underline text-camel hover:font-extrabold"}>
                     Log In</a></p>
                 <p>Sign Up With:</p>
                 <div className={"h-16 w-24 relative bg-white bg-opacity-25 border border-white border-opacity-50 grid items-center justify-center rounded"}>
@@ -120,4 +120,4 @@ const SignUpPage: React.FC = () => {
     );
 };
 
-export default SignUpPage;
+export default AdminSignUpPage;

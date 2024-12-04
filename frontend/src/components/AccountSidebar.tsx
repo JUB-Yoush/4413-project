@@ -1,11 +1,11 @@
 import React from 'react';
+import {useTokenContext} from "./TokenContext.tsx";
 
-interface Prop{
-    removeToken : ()=>void;
-}
-const AccountSidebar: React.FC<Prop> = (prop) => {
+const AccountSidebar: React.FC = () => {
+
+    const {removeToken} = useTokenContext();
     function logOut() {
-        prop.removeToken();
+        removeToken();
         alert("You have been signed out");
     }
     return (

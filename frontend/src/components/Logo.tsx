@@ -6,7 +6,7 @@ interface Size{
 
 const Logo: React.FC<Size> = (siz: Size) => {
     return (
-        <div className="mb-4 mt-4 grid gird-cols-1 justify-center">
+        <div className="grid grid-cols-1 justify-center">
             {/* DJ WAMP Logo */}
             <p className="basis-[20%] flex justify-start"
                 style={{

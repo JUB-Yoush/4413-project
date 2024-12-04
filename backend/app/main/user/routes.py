@@ -43,8 +43,10 @@ def get_user():
     payload = get_user_from_token(token)
     user = get_referenced_user(payload)
     try:
+        print("user routes.py: get user passed")
         return jsonify({"user": user.json_formatted()}), 201
     except Exception as e:
+        print("user routes.py: get user failed")
         return jsonify({"error getting user data": str(e)}), 500
 
 

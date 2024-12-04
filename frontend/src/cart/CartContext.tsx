@@ -3,6 +3,7 @@ import { getCartBackend, addToCartBackend, updateCartBackend, removeFromCartBack
 import { getCart, addToCart, updateCart, removeFromCart} from './localCart';
 import { CartItem, Cart, Product } from '../types';
 import usePromptUserChoice from '../components/PromptUserChoice';
+import {useTokenContext} from "../components/TokenContext.tsx";
 
 interface CartContextProps {
     cartItems: CartItem[];
@@ -23,13 +24,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [cartCount, setCartCount] = useState<number>(0);
 
     const promptUserChoice = usePromptUserChoice();
-
+    const {userType} = useTokenContext();
 
     // Fetch cart data from backend or local storage
     const refreshCart = async () => {
         try {
             const token = localStorage.getItem('token');
-            if (token) {
+            if (token && userType==="user") {
                 const response: Cart = await getCartBackend(token);
                 const items = response.items || [];
                 const total = response.cart_total || 0;
@@ -57,7 +58,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleAddToCart = async (product: Product, quantity: number) => {
         try {
             const token = localStorage.getItem('token');
-            if (token) {
+            if (token && userType==="user") {
                 await addToCartBackend(product.id, quantity, token);
                 console.log("Adding " , quantity, " product_id", product.id, "to backend cart.");
             } else {
@@ -74,7 +75,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleUpdateCart = async (productId: string, quantity: number) => {
         try {
             const token = localStorage.getItem('token');
-            if (token) {
+            if (token && userType==="user") {
                 await updateCartBackend(productId, quantity, token);
                 console.log("Updating product_id:", productId, "to quantity:", quantity, "in backend cart");
             } else {
@@ -91,7 +92,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleRemoveFromCart = async (productId: string) => {
         try {
             const token = localStorage.getItem('token');
-            if (token) {
+            if (token && userType==="user") {
                 await removeFromCartBackend(productId, token);
                 console.log("Removing product_id", productId, "from backend cart.");
             } else {

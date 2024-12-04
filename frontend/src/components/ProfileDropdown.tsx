@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import person from '../assets/person.svg';
+import { useTokenContext } from './TokenContext.tsx'; // Adjust the path as needed
 
-interface Prop{
-    tokenStr: string|null;
-    removeToken : ()=>void;
-}
-const ProfileDropdown: React.FC<Prop> = (prop) => {
+const ProfileDropdown: React.FC = () => {
+    const {token, removeToken} =useTokenContext();
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-    const checkLoggedIn = !(!prop.tokenStr && prop.tokenStr !== "");
+    const checkLoggedIn = !(!token && token !== "");
 
     const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
     const closeDropdown = () => setDropdownOpen(false); // Function to close dropdown
 
     function logOut() {
-        prop.removeToken();
+        removeToken(); //also redirects them to merch page
         alert("You have been signed out");
     }
 

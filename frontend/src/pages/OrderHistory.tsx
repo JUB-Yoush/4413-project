@@ -2,12 +2,8 @@ import React from 'react';
 import AccountSidebar from "../components/AccountSidebar.tsx";
 import Order from "../components/Order.tsx";
 
-interface Prop{
-    tokenStr: string|null;
-    removeToken : ()=>void;
-    setToken: (userToken: string) => void;
-}
-const OrderHistory: React.FC<Prop> = (prop) => {
+
+const OrderHistory: React.FC = () => {
     const orders = [
         { k:1, id: "123456789", date: 'November 13, 2024', total:128, cc: "************1234"},
         { k:2, id: "234567891", date: 'November 1, 2024', total:32.00, cc: "************1234"},
@@ -16,7 +12,7 @@ const OrderHistory: React.FC<Prop> = (prop) => {
     ];
     return (
         <div className={"flex mt-4 mb-10"}>
-            <AccountSidebar removeToken={prop.removeToken} ></AccountSidebar>
+            <AccountSidebar></AccountSidebar>
             <div className="flex-grow px-8 max-w-[900px]">
                 {/*Header*/}
                 <p className={"text-3xl mb-6"}>Order History</p>

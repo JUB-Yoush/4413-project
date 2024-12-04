@@ -4,7 +4,7 @@ import LinkedIncon from '../assets/LinkedIn.svg'
 
 const Footer: React.FC = () =>{
     return(
-        <footer className={"bg-beige p-10 flex flex-row gap-4 justify-center"}>
+        <footer className={"bg-beige p-10 flex flex-row gap-4 justify-center border-t border-t-camel"}>
             <div className={"flex-1"}>
                 <p>© DJ WAMP 2024</p>
             </div>

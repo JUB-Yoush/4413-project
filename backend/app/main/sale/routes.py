@@ -3,7 +3,7 @@ import datetime
 import jwt
 from . import sale
 import bcrypt
-from app.models import Product, Sale
+from app.models import Product, Sale, Purchase
 from mongoengine import Q
 from ...auth.session import admin_required, get_user_from_token, get_referenced_user
 
@@ -19,32 +19,29 @@ def get_sales():
         total_price = request.args.get("total_price")
         sort_by = request.args.get("sort_by", "name")
         order = request.args.get("order", "asc")
-        # query would have to look through every purchase in the sale, to get the products purchased.
+        # query would have to look through every purchase in the sale, to get the purchases purchased.
         # build query
         query = Q()
-        if category:
-            query &= Q(category__icontains=category)
-        if brand:
-            query &= Q(brand__icontains=brand)
-        if album:
-            query &= Q(album__icontains=album)
-        if name:
-            query &= Q(name__icontains=name)
-        if min_price:
-            query &= Q(price__gte=float(min_price))
-        if max_price:
-            query &= Q(price__lte=float(max_price))
+        if date:
+            query &= Q(date__like=date)
+        if user:
+            query &= Q(user__icontains=user)
+        if product:
+            query &= Q(product__like=product)
+        if total_price:
+            query &= Q(price__eq=float(total_price))
 
-        products = Product.objects(query)
-        # sort results
-        sort_order = 1 if order == "asc" else -1
-        products = products.order_by(f"{'-' if sort_order == -1 else ''}{sort_by}")
+        purchases = Sale.objects().all()
+        # purchases = Sale.objects(query)
+        # # sort results
+        # sort_order = 1 if order == "asc" else -1
+        # purchases = purchases.order_by(f"{'-' if sort_order == -1 else ''}{sort_by}")
 
-        products_json = []
-        for product in products:
-            products_json.append(product.json_formatted())
+        purchases_json = []
+        for product in purchases:
+            purchases_json.append(product.json_formatted())
 
-        return jsonify({"products": products_json}), 201
+        return jsonify({"purchases": purchases_json}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

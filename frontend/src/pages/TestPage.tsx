@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { useTokenContext } from "../TokenContext"; // Access user token
+import { useTokenContext } from "../components/TokenContext.tsx"; // Access user token
 import { Product } from "../types"; // Adjust path as needed
 
 const TestPage: React.FC = () => {

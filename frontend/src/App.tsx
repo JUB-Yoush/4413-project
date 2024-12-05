@@ -26,7 +26,6 @@ import Sales from "./pages/Admin/Sales.tsx";
 import Orders from "./pages/Admin/Orders.tsx";
 import Inventory from "./pages/Admin/Inventory.tsx";
 import EditProductPage from "./pages/Admin/EditProductPage.tsx";
-// import {useCartContext} from "../cart/CartContext.tsx";
 
 const App: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>(''); // Shared search state
@@ -47,7 +46,7 @@ const App: React.FC = () => {
                     : <></>}
 
                 {/* Main section */}
-                <div className="flex flex-col mx-8 gap-4 min-h-screen flex-grow">
+                <div className="flex flex-col mx-8 pb-16 gap-4 min-h-screen flex-grow">
                     <div className={"min-w-full text-left"}><Logo size={20}></Logo></div>
                     <Outlet />
                 </div>
@@ -108,8 +107,8 @@ const App: React.FC = () => {
                             {/*Only available if admin*/}
                             <Route index path={"/admin/dashboard"} element={<Dashboard />} />
                             <Route path={"/admin/inventory"} element={<Inventory />} />
+                            <Route path="/admin/inventory/:id" element={<EditProductPage />} />
                             <Route path={"/admin/inventory/addProduct"} element={<AddProductPage />} />
-                            <Route path={"/admin/inventory/editProduct/:name"} element={<EditProductPage />} />
 
                             <Route index path={"/admin/dashboard"} element={<Dashboard />} />
                             <Route path={"/admin/orders"} element={<Orders />} />
@@ -123,6 +122,8 @@ const App: React.FC = () => {
                         <>
                             <Route index element={<AdminLogInPage />} />
                             <Route path={"signup"} element={<AdminSignUpPage />} />
+
+                            <Route path={"/admin/*"} element={<AdminLogInPage />} />
                         </>
                     }
 

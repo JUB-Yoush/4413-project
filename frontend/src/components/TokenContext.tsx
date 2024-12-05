@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 // Define the type of the context
 interface TokenContextType {
@@ -17,11 +18,11 @@ const TokenContext = createContext<TokenContextType | undefined>(undefined);
 export const TokenProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [token, setTokenState] = useState<string | null>(() => localStorage.getItem('token'));
     const [userType, setUserTypeState] = useState<string | null>(() => localStorage.getItem('userType'));
+    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`; //add authorization to header by default
 
     const setToken = (newToken: string) => {
         setTokenState(newToken);
         localStorage.setItem('token', newToken);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`; //add authorization to header by default
     };
 
     const removeToken = () => {
@@ -29,8 +30,9 @@ export const TokenProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setUserType("user");
         localStorage.removeItem('token');
         localStorage.removeItem('userType');
+        alert("You have been signed out");
         setTimeout(() => {
-            window.location.href = '/'; // Redirect to home or login page
+            useNavigate()("/"); // Redirect to home or login page
         }, 1000);
     };
 

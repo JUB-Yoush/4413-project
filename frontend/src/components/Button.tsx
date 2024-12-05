@@ -3,7 +3,6 @@ import React from 'react';
 {/* eslint-disable react/jsx-props-no-spreading */}
 import { forwardRef } from "react";
 import { type VariantProps } from "tailwind-variants";
-// import { TbLoader } from "react-icons/tb";
 import {secButton, clickedButton, baseButton} from "./ButtonStyles";
 
 // define all the button attributes

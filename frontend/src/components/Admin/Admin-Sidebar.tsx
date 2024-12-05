@@ -21,8 +21,6 @@ const AdminSidebar: React.FC = memo(() => {
     const {setCurrentPage} = useSPAContext();
     function logOut() {
         removeToken();
-        window.location.href="/admin";
-        alert("You have been signed out");
     }
     return (
         <aside className="w-[200px] h-auto pl-8 pr-8" aria-label="Sidebar">

@@ -6,39 +6,35 @@ import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import axios from "axios";
 
-interface URL{
-    url: string;
-}
 
 const EditProductPage: React.FC = () => {
     const location = useLocation(); //to receive data from previous page
-    const {name } = useParams<{ name: string }>() || "";
-    const [product, setProduct] = useState<Product | null>(location.state as Product);
+    const {id } = useParams<{ id: string }>() ?? {id:""};
+    const [product, setProduct] = useState<Product>(location.state as Product);
     const [popupVisible, setPopupVisible] = useState(false); // Controls visibility
 
+    const [showForm, setShowForm] = useState(false);
     const [prodForm, setProdForm]
-        = useState({name: "Product Name", category: "Product Category",
+        = useState({id: "Product ID", name: "Product Name", category: "Product Category",
         brand: "Product Brand", album: "Product Album", price: 0.00,
         description: "Product Description", image_url: "Image URL", quantity: 1});
 
-    function getProduct(name: string) {
-        // handle sending info to flask once the form is submitted
+    function getProduct(id: string) {
+        // only used if the person directly searches for the product url
         axios({
             method: "get",
             baseURL: 'http://127.0.0.1:5000', //can replace with personal port
-            url: `/catalog/products?name=${encodeURIComponent(name)}`,
+            url: `/catalog/products/${encodeURIComponent(id)}`,
         }).then(async (response) => {
-            //     TODO confirmation of product added
-            //     perhaps prompt to view on merch page
-            const resp = response.data.products[0];
+            const resp = response.data;
             setProduct(resp); // Assuming API returns products array
-            setProdForm(
-                {name: resp.name, category: resp.category,
-                brand: resp.brand, album: resp.album, price: resp.price,
-                description: resp.description, image_url: resp.image_url,
-                quantity: resp.quantity}
-            );
             console.log("Product Retrieved! ", product);
+            setProdForm(
+                {id: product.id, name: product.name, category: product.category,
+                    brand: product.brand, album: product.album, price: product.price,
+                    description: product.description, image_url: product.image_url,
+                    quantity: product.quantity}
+            );
         }).catch((error) => {
             if (error.response) {
                 console.log('Error fetching product:', error.response);
@@ -49,44 +45,43 @@ const EditProductPage: React.FC = () => {
     }
     useEffect(() => {
         // Reset product and fetch new data when route changes
-        if (location.state) {
-            setProduct(location.state as Product);
-        } else if (name) {
-            getProduct(name);}
-    }, [name, location.state]);
+        if (id) getProduct(id);
 
-
+        console.log("Product: ", product);
+    }, [id]);
 
     function editProduct(event: React.FormEvent) {
         // handle sending info to flask once the form is submitted
-        axios({
-            method: "patch",
-            baseURL: 'http://127.0.0.1:5000', //can replace with personal port
-            url: `/catalog/products?name=${encodeURIComponent(name)}`,
-            data: {
-                name: prodForm.name,
-                category: prodForm.category,
-                brand: prodForm.brand,
-                album: prodForm.album,
-                price: prodForm.price,
-                description: prodForm.description,
-                image_url: prodForm.image_url,
-                quantity: prodForm.quantity
-            }
-        }).then(async () => {
-            //     TODO confirmation of product added
-            //     perhaps prompt to view on merch page
-            setPopupVisible(true); // Show the popup
-            setTimeout(() => setPopupVisible(false), 800); // Start fade out
-            alert("Product Edited!");
-        }).catch((error) => {
-            if (error.response) {
-                console.log(error.response);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            }
-        })
-        event.preventDefault();
+        if(id) {
+            axios({
+                method: "patch",
+                baseURL: 'http://127.0.0.1:5000', //can replace with personal port
+                url: `/catalog/products/${encodeURIComponent(id)}`,
+                data: {
+                    name: prodForm.name,
+                    category: prodForm.category,
+                    brand: prodForm.brand,
+                    album: prodForm.album,
+                    price: prodForm.price,
+                    description: prodForm.description,
+                    image_url: prodForm.image_url,
+                    quantity: prodForm.quantity
+                }
+            }).then(async () => {
+                setPopupVisible(true); // Show the popup
+                setTimeout(() => setPopupVisible(false), 800); // Start fade out
+                setShowForm(false);
+                alert("Product Edited!");
+                getProduct(id); //update the product
+            }).catch((error) => {
+                if (error.response) {
+                    console.log(error.response);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                }
+            })
+            event.preventDefault();
+        }
     }
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -97,7 +92,13 @@ const EditProductPage: React.FC = () => {
             })
         )
     }
+
+
+
     if (!product) return <div>Loading...</div>;
+
+
+
     const fieldStyle = "bg-transparent w-full mt-1 py-1 px-2 border border-camel";
     const labelStyle = "text-sm";
 
@@ -114,8 +115,20 @@ const EditProductPage: React.FC = () => {
                 &nbsp;&nbsp;﹥
                 <p className="text-black">{prodForm.name}</p>
             </div>
-            <h1 className="text-3xl mb-4">Editing {prodForm.name}</h1>
+            <div className={"flex flex-row items-center"}>
+                {showForm ?
+                    <h1 className="text-3xl grow">Editing {prodForm.name}</h1>
+                :
+                    <>
+                    <h1 className="text-3xl grow">Viewing {prodForm.name}</h1>
+                    <Button onClick={()=>{setShowForm(true)}}>
+                        Edit</Button>
+                    </>
+                }
+            </div>
             <div className="mt-4 flex flex-row h-[calc(100vh-200px)]">
+
+                {showForm ?
                 <form method={"post"}>
                     {/* Product */}
                     <div className="basis-[75%] flex flex-row">
@@ -194,7 +207,7 @@ const EditProductPage: React.FC = () => {
                                         id={"description"} name={"description"} value={prodForm.description} type={"text"}
                                         onChange={handleChange} placeholder={""} autoComplete={"on"}
                                         className={fieldStyle}
-                                        pattern={"^(?=.*\d)(?=.*[a-zA-Z](?=.*[^a-zA-Z0-9]))"}/>
+                                    />
                                 </div>
 
                                 <div className="mb-4 w-full">
@@ -205,21 +218,19 @@ const EditProductPage: React.FC = () => {
                                         onChange={handleChange} placeholder={""} autoComplete={"on"}
                                         className={fieldStyle}/>
                                 </div>
-                            <div className="relative">
-                                <Button type={"submit"} onClick={editProduct}>
-                                    Submit Product Edit</Button>
-                                {/* Popup Notification with Fade-Out */}
-                                <div
-                                    className={`absolute -top-3 -left-7 text-coffee px-3 py-1 transition-opacity duration-500 ${
-                                        popupVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                                    }`}
-                                > ✨Wamptastic✨
-                                </div>
                                 <div className="mb-4 w-full grid justify-center items-center">
-                                    <Button type={"reset"}>
+                                    <Button type={"submit"} buttonVariant={"clicked"} onClick={editProduct}>
+                                        Save</Button>
+                                    {/* Popup Notification with Fade-Out */}
+                                    <div
+                                        className={`absolute -top-3 -left-7 text-coffee px-3 py-1 transition-opacity duration-500 ${
+                                            popupVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                                        }`}
+                                    > ✨Wamptastic✨
+                                    </div>
+                                    <Button type={"reset"} onClick={()=>{setShowForm(false)}}>
                                         Cancel</Button>
                                 </div>
-                            </div>
                         </div>
 
 
@@ -238,6 +249,53 @@ const EditProductPage: React.FC = () => {
                     </div>
                 </div>
                 </form>
+
+
+                    :
+
+                // only show product details, no edit
+                <div className="flex flex-row">
+                    {/* Product image */}
+                    <div className="basis-1/3">
+                        <div className="relative w-full pt-[100%] overflow-hidden">
+                            <Zoom zoomMargin={60}>
+                                <img
+                                    src={product.image_url}
+                                    alt={product.name}
+                                    className="absolute top-0 left-0 w-full h-full object-cover"
+                                />
+                            </Zoom>
+                        </div>
+                        <div>
+                            <p className="mt-3 text-right text-center">Click on image to zoom</p>
+                        </div>
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="basis-2/3 pl-8 border-r border-r-camel pr-[80px] h-[calc(100vh-250px)] overflow-y-auto scrollbar-hidden">
+                        {/* Product desc + checkout */}
+                        <div>
+                            <h1 className="text-xl">{product.name}</h1>
+                            <p className="pt-4">$ {product.price.toFixed(2)}</p>
+                            <p className="pt-4 text-sm">{product.description}</p>
+                            <p className="pt-3 pb-5">In stock: {product.quantity}</p>
+                        </div>
+
+
+                        {/* Shipping info */}
+                        <div className="mt-8 border-t border-t-camel">
+                            <p className="text-xl pt-8">Shipping and Refunds</p>
+                            <br />
+                            <p className="text-sm">Ships within 2-3 business days from warehouses in Nigeria</p>
+                            <br />
+                            <p className="text-sm">Refund Policy</p>
+                            <ul className="text-sm list-disc ml-10">
+                                <li className="pt-2">Refunds allowed within 30 days of receipt. Must be unopened.</li>
+                                <li>No exchanges</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>}
             </div>
         </>
     );
@@ -302,99 +360,6 @@ const EditProductPage: React.FC = () => {
     //
     //     setValidation(errors);
     // };
-
-    //
-    // return (
-    //     <div className={"min-w-full flex-grow"}>
-    //         <form className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" method={"post"}>
-    //             <h1 className="text-3xl mb-4">Add a Product to Inventory</h1>
-    //             <div className="mb-4">
-    //                 <label
-    //                     htmlFor={"name"}>Name</label>
-    //                 <input
-    //                     id={"name"} name={"name"} value={prodForm.name} type={"text"} onChange={handleChange}
-    //                     placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}/>
-    //             </div>
-    //             <div className="mb-4 w-full">
-    //                 <label
-    //                     htmlFor={"category"}>Category</label>
-    //                 <input
-    //                     id={"category"} name={"category"} value={prodForm.category} type={"text"}
-    //                     onChange={handleChange} placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}/>
-    //             </div>
-    //             <div className="mb-4 w-full">
-    //                 <label
-    //                     htmlFor={"brand"}>Brand</label>
-    //                 <input
-    //                     id={"brand"} name={"brand"} value={prodForm.brand} type={"text"}
-    //                     onChange={handleChange} placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}/>
-    //             </div>
-    //
-    //             <div className="mb-4 w-full">
-    //                 <label
-    //                     htmlFor={"album"}>Album</label>
-    //                 <input
-    //                     id={"album"} name={"album"} value={prodForm.album} type={"text"}
-    //                     onChange={handleChange} placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}/>
-    //             </div>
-    //             <div className="mb-4 w-full">
-    //                 <label
-    //                     htmlFor={"price"}>Price</label>
-    //                 <input
-    //                     id={"price"} name={"price"} value={prodForm.price} type={"number"}
-    //                     onChange={handleChange} placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}/>
-    //             </div>
-    //             <div className="mb-4 w-full">
-    //                 <label
-    //                     htmlFor={"description"}>Description</label>
-    //                 <input
-    //                     id={"description"} name={"description"} value={prodForm.description} type={"text"}
-    //                     onChange={handleChange} placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}
-    //                     pattern={"^(?=.*\d)(?=.*[a-zA-Z](?=.*[^a-zA-Z0-9]))"}/>
-    //             </div>
-    //             {/*<div className="mb-4 w-full">*/}
-    //             {/*    <label*/}
-    //             {/*        htmlFor={"image_url"}>image_url</label>*/}
-    //             {/*    <input*/}
-    //             {/*        id={"image_url"} name={"image_url"} value={prodForm.image_url} type={"file"}*/}
-    //             {/*        onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
-    //             {/*        className={fieldStyle}/>*/}
-    //             {/*</div>*/}
-    //             <div className="mb-4 w-full">
-    //                 <label
-    //                     htmlFor={"image_url"}>Image URL</label>
-    //                 <input
-    //                     id={"image_url"} name={"image_url"} value={prodForm.image_url} type={"url"}
-    //                     onChange={handleChange} placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}/>
-    //             </div>
-    //             <div className="mb-4 w-full">
-    //                 <label
-    //                     htmlFor={"quantity"}>Quantity</label>
-    //                 <input
-    //                     id={"quantity"} name={"quantity"} value={prodForm.quantity} type={"number"}
-    //                     onChange={handleChange} placeholder={""} autoComplete={"on"}
-    //                     className={fieldStyle}/>
-    //             </div>
-    //
-    //             <div className="mb-4 w-full grid justify-center items-center">
-    //                 <Button type={"submit"} onClick={editProduct}>
-    //                     Add Product</Button>
-    //             </div>
-    //             <div className="mb-4 w-full grid justify-center items-center">
-    //                 <Button type={"reset"} onClick={()=>{window.location.href='/admin';}}>
-    //                     Cancel</Button>
-    //             </div>
-    //
-    //         </form>
-    //     </div>
-    // );
 };
 
 export default EditProductPage;

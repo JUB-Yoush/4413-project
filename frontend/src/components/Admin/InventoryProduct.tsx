@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from './Button.tsx';
-import { Product } from '../types'; 
+import Button from '../Button.tsx';
+import { Product } from '../../types';
 
-interface CatalogProductProps {
+interface InventoryProductProps {
     product: Product;
     btnLabel?: string;
 }
 
-  const CatalogProduct: React.FC<CatalogProductProps> = ({ product,btnLabel }) => {
+  const InventoryProduct: React.FC<InventoryProductProps> = ({ product,btnLabel }) => {
 
     const navigate = useNavigate();
     const isNavigating = useRef(false);
@@ -17,8 +17,7 @@ interface CatalogProductProps {
         if (isNavigating.current) return; 
         isNavigating.current = true;
 
-        navigate(`/catalog/products/${encodeURIComponent(product.name)}`, { state: product });
-        // window.location.reload();
+        navigate(`/admin/inventory/${encodeURIComponent(product.id)}`, { state: product });
     };
 
     return (
@@ -48,5 +47,5 @@ interface CatalogProductProps {
     );
 };
 
-export default CatalogProduct;
+export default InventoryProduct;
 

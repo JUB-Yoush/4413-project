@@ -80,6 +80,9 @@ const LogInPage: React.FC = () => {
             </div>
 
             <hr className={"border-camel mt-10 mb-10"}/>
+            <Button onClick={()=>{window.location.href="/admin";}}>
+                To Admin View</Button>
+            <hr className={"border-camel mt-10 mb-10"}/>
             <div className="grid grid-cols-1 gap-4 place-items-center">
                 <p>Don't have an account? <a href={"/signup"}
                                              className={"font-normal underline text-camel hover:font-extrabold"}>

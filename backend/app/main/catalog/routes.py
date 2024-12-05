@@ -81,19 +81,16 @@ def get_product(product_id):
         return jsonify({"error": str(e)}), 500
 
 
-@catalog.route("/products/<product_id>", methods=["GET", "PATCH"])
+@catalog.route("/products/<product_id>", methods=["PATCH"])
 @admin_required
 def edit_product(product_id):
     data = request.json
     try:
         product = Product.objects.get(id=product_id)
-        print("1")
         for key, value in data.items():
             if hasattr(product, key):
                 setattr(product, key, value)
-                print("2")
         product.save()
-        print("3")
         return jsonify({"message": "updated product"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500

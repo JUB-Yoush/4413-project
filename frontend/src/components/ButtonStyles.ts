@@ -51,12 +51,13 @@ export const baseButton = tv({
 // solid button
 export const clickedButton = tv({
     extend: baseButton,
-    base: 'bg-camel text-white'
+    base: 'bg-tea text-white border-tea'+
+        ' hover:text-black hover:bg-transparent hover:border-tea'
 });
 
 // solid button
 export const secButton = tv({
     extend: baseButton,
-    base: 'bg-transparent border border-tea ' +
-        'hover:text-black hover:bg-tea hover:border-transparent',
+    base: 'bg-transparent border border-tea' +
+        ' hover:text-black hover:bg-tea hover:border-transparent'
 });

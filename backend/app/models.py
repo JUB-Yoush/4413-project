@@ -28,30 +28,13 @@ class CartItem(EmbeddedDocument):
     def json_formatted(self):
         product = Product.objects.get(id=self.product_id.id)
         return {
-                "product_id": str(product.id),
-                "name": product.name,
-                "price": product.price,
-                "total_price": product.price * self.quantity,
-                "quantity": self.quantity,
-                "image_url": product.image_url,
-            }
-
-# class Product(Document):
-#     name = StringField(required=True)
-#     category = StringField()
-#     brand = StringField()
-#     album = StringField()
-#     price = FloatField()
-#     description = StringField()
-#     image_url = StringField()
-#     quantity = IntField()
-
-
-# # CartItem document that's stored in User's cart
-
-# class CartItem(EmbeddedDocument):
-#     product_id = ReferenceField(Product, required=True)
-#     quantity = IntField(default=1)
+            "product_id": str(product.id),
+            "name": product.name,
+            "price": product.price,
+            "total_price": product.price * self.quantity,
+            "quantity": self.quantity,
+            "image_url": product.image_url,
+        }
 
 
 class User(Document):
@@ -103,15 +86,6 @@ class User(Document):
         ]
         return model_json
 
-    def update_cart_total(self):
-        """Recalculate total amount that cart costs"""
-        total = 0.0
-        for item in self.cart_items:
-            product = Product.objects.get(id=item.product_id.id)
-            total += product.price * item.quantity
-        self.cart_total = total
-        self.save()
-
 
 class Admin(Document):
     email = StringField(required=True)
@@ -128,6 +102,7 @@ class Admin(Document):
 class Sale(Document):
     date = DateTimeField(required=True)
     user = ReferenceField(User)
+    total_price = FloatField()
     purchases = ListField(EmbeddedDocumentField(CartItem), required=True)
     approved = BooleanField(required=True)
 
@@ -135,13 +110,16 @@ class Sale(Document):
         print(f"serializing {self.__str__}")
         model_json = self.to_mongo().to_dict()
         model_json["id"] = str(model_json["_id"])
-        model_json["user"] = User.objects.get(id=self.user)
+        model_json["user"] = User.objects.get(id=self.user.id).json_formatted()
+        print("purchases")
         model_json["purchases"] = [
-            cart_item.json_formatted() for cart_item in purchases
+            cart_item.json_formatted() for cart_item in self.purchases
         ]
         del model_json["_id"]
         return model_json
 
+
+"""
 
 class Purchase(Document):
     date = DateField(required=True)
@@ -150,3 +128,4 @@ class Purchase(Document):
     price = FloatField(required=True)
     # {product_id:quantity}
     quantity = DictField()
+"""

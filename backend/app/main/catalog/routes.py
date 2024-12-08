@@ -94,3 +94,14 @@ def edit_product(product_id):
         return jsonify({"message": "updated product"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@catalog.route("/products/<product_id>", methods=["DELETE"])
+@admin_required
+def delete_product(product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+        product.delete()
+        return jsonify({"message": "product deleted"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

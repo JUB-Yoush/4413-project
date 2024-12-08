@@ -176,7 +176,7 @@ const Inventory: React.FC = () => {
 
                 {/* Main section */}
                 <div className="flex-grow ml-[45px] mr-[30px]">
-                    <div className="text-xl"  style={{fontFamily: "'Lexend Zetta', sans-serif"}}>Inventory - {currentCategory} </div>
+                    <div className="text-2xl font-bold mb-4">Inventory - {currentCategory} </div>
 
                     <div className="flex justify-between items-center  gap-2 pt-2 py-5">
                         <div>Showing {products.length} products</div>

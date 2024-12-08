@@ -12,8 +12,7 @@ const sidebarItems: NavLink[] = [
     { name: 'Dashboard', href: '/admin/dashboard' },
     { name: 'Inventory', href: '/admin/inventory' },
     { name: 'Orders', href: '/admin/orders' },
-    { name: 'Users', href: '/admin/users' },
-    { name: 'Sales', href: '/admin/sales' }
+    { name: 'Users', href: '/admin/users' }
 ];
 
 const AdminSidebar: React.FC = memo(() => {

@@ -1,3 +1,19 @@
+export interface User{
+    id: string;
+    fname: string,
+    lname: string,
+    email: string,
+    password: string,
+    cc_info: string,
+    decryption_key: string,
+    street: string,
+    city: string,
+    province: string,
+    postal_code: string,
+    cart_items: [],
+    cart_total: number,
+
+}
 export interface Product {
     id: string;           // MongoDB ObjectId
     name: string;          // Name of the product
@@ -22,4 +38,20 @@ export interface CartItem {
 export interface Cart {
     cart_total: number;
     items: CartItem[];
+}
+export interface Order {
+    id: string;           // MongoDB ObjectId
+    approved: boolean;
+    date: string;
+    purchases: CartItem[];
+    user: User;
+}
+export interface OrderProxy {
+    id: string;
+    approved: string;
+    date: string;
+    purchases: string;
+    user: string;
+    total_price: string;
+    [key:string]: string;
 }

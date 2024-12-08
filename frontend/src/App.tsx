@@ -12,7 +12,6 @@ import TourPage from "./pages/TourPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import Footer from "./components/Footer.tsx";
 import CartPage from "./pages/CartPage.tsx";
-import Dashboard from "./pages/Admin/Dashboard.tsx";
 import RouteNotFound from "./pages/RouteNotFound.tsx";
 import AdminSidebar from "./components/Admin/Admin-Sidebar.tsx";
 
@@ -22,10 +21,10 @@ import AdminSignUpPage from "./pages/Admin/AdminSignUpPage.tsx";
 import AddProductPage from "./pages/Admin/AddProductPage.tsx";
 import Logo from "./components/Logo.tsx";
 import Users from "./pages/Admin/Users.tsx";
-import Sales from "./pages/Admin/Sales.tsx";
 import Orders from "./pages/Admin/Orders.tsx";
 import Inventory from "./pages/Admin/Inventory.tsx";
 import EditProductPage from "./pages/Admin/EditProductPage.tsx";
+import DashSummary from "./pages/Admin/DashSummary.tsx";
 
 const App: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState<string>(''); // Shared search state
@@ -46,8 +45,8 @@ const App: React.FC = () => {
                     : <></>}
 
                 {/* Main section */}
-                <div className="flex flex-col mx-8 pb-16 gap-4 min-h-screen flex-grow">
-                    <div className={"min-w-full text-left"}><Logo size={20}></Logo></div>
+                <div className="w-9/12 flex flex-col pb-16 pr-4 gap-4 min-h-screen flex-grow">
+                    <div className={"min-w-full text-left pl-2"}><Logo size={20}></Logo></div>
                     <Outlet />
                 </div>
             </div>
@@ -105,15 +104,14 @@ const App: React.FC = () => {
                     {userType && userType === "admin"?
                         <>
                             {/*Only available if admin*/}
-                            <Route index path={"/admin/dashboard"} element={<Dashboard />} />
+                            <Route index element={<DashSummary />} />
+                            <Route index path={"/admin/dashboard"} element={<DashSummary />} />
                             <Route path={"/admin/inventory"} element={<Inventory />} />
                             <Route path="/admin/inventory/:id" element={<EditProductPage />} />
                             <Route path={"/admin/inventory/addProduct"} element={<AddProductPage />} />
 
-                            <Route index path={"/admin/dashboard"} element={<Dashboard />} />
                             <Route path={"/admin/orders"} element={<Orders />} />
                             <Route index path={"/admin/users"} element={<Users />} />
-                            <Route path={"/admin/sales"} element={<Sales />} />
 
                             <Route path={"/admin/login"} element={<Navigate to="/admin/dashboard" replace />} />
                             <Route path={"/admin/signup"} element={<Navigate to="/admin/dashboard" replace />} />

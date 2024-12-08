@@ -56,7 +56,7 @@ const AccountDetails: React.FC<AccountInfo> = (account: AccountInfo) => {
                     <p className={"text-camel bg-transparent w-full mt-1 py-1 px-2 border border-camel"}>{creditcard}</p>
                 </div>
                 <div className={labelDivStyle}>
-                    <label htmlFor={"password"}>Expiry Date</label>
+                    <label htmlFor={"expiry"}>Expiry Date</label>
                     <p className={"text-camel bg-transparent w-full mt-1 py-1 px-2 border border-camel"}>{expiry}</p>
                 </div>
                 <div className={labelDivStyle}>

@@ -1,54 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useParams, Link } from 'react-router-dom';
-import { Product } from '../../types';
+import React, { useState } from 'react';
 import Button from '../../components/Button.tsx';
-import Suggest from '../../components/Suggest.tsx';
-import QuantityControl from '../../components/QuantityControl.tsx';
-import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import { useCartContext } from '../../cart/CartContext';
 import axios from "axios";
 
 const AddProductPage: React.FC = () => {
-    const location = useLocation();
-    const { name } = useParams<{ name: string }>();
-    const [product, setProduct] = useState<Product | null>(location.state as Product);
-    const [selectedQuantity, setSelectedQuantity] = useState<number>(1); // Default to 1
-    const [popupVisible, setPopupVisible] = useState(false); // Controls visibility
-    const { handleAddToCart } = useCartContext();
-
-    // useEffect(() => {
-    //     // Reset product and fetch new data when route changes
-    //     const fetchProduct = async () => {
-    //         if (location.state) {
-    //             setProduct(location.state as Product);
-    //         } else if (name) {
-    //             try {
-    //                 const response = await fetch(
-    //                     `http://127.0.0.1:5000/catalog/products?name=${encodeURIComponent(name)}`
-    //                 );
-    //                 const data = await response.json();
-    //                 setProduct(data.products[0]); // Assuming API returns products array
-    //             } catch (error) {
-    //                 console.error('Error fetching product:', error);
-    //             }
-    //         }
-    //     };
-    //
-    //     // fetchProduct();
-    // }, [name, location.state]);
-
-    // if (!product) return <div>Loading...</div>;
-
-    const handleAddToCartWrapper = async () => {
-        try {
-            await handleAddToCart(product, selectedQuantity); // Add product to cart
-            setPopupVisible(true); // Show the popup
-            setTimeout(() => setPopupVisible(false), 800); // Start fade out
-        } catch (error) {
-            console.error("Failed to add to cart:", error);
-        }
-    };
 
     // addProduct form state starts with email and password as empty strings
     const [prodForm, setProdForm]
@@ -71,10 +26,11 @@ const AddProductPage: React.FC = () => {
                 image_url: prodForm.image_url,
                 quantity: prodForm.quantity
             }
-        }).then((response) => {
+        }).then(() => {
         //     TODO confirmation of product added
         //     perhaps prompt to view on merch page
             alert("Product Added!");
+            window.location.href = `/admin/inventory`;
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response);
@@ -103,6 +59,20 @@ const AddProductPage: React.FC = () => {
                 ...prevNote, [name]: value
             })
         )
+    }
+    function cancel(event: React.FormEvent){
+        window.location.href='/admin/inventory';
+        setProdForm(({
+            name: "",
+            category: "",
+            brand: "",
+            album: "",
+            price: 0.00,
+            description: "",
+            image_url: "",
+            quantity: 0
+        }))
+        event.preventDefault();
     }
     // TODO form validation to prevent empty product submissions
     // const checkValidation = () => {
@@ -250,7 +220,7 @@ const AddProductPage: React.FC = () => {
                         Add Product</Button>
                 </div>
                 <div className="mb-4 w-full grid justify-center items-center">
-                    <Button type={"reset"} onClick={()=>{window.location.href='/admin';}}>
+                    <Button type={"reset"} onClick={cancel}>
                         Cancel</Button>
                 </div>
 

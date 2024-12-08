@@ -51,13 +51,20 @@ export const baseButton = tv({
 // solid button
 export const clickedButton = tv({
     extend: baseButton,
-    base: 'bg-tea text-white border-tea'+
+    base: 'bg-tea text-black border-tea'+
         ' hover:text-black hover:bg-transparent hover:border-tea'
 });
 
-// solid button
+// see through button
 export const secButton = tv({
     extend: baseButton,
     base: 'bg-transparent border border-tea' +
         ' hover:text-black hover:bg-tea hover:border-transparent'
+});
+
+// warning button
+export const warnButton = tv({
+    extend: baseButton,
+    base: 'bg-transparent border border-pink' +
+        ' hover:text-white hover:font-medium hover:bg-pink'
 });

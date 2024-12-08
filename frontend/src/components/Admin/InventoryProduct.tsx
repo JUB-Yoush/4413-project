@@ -42,7 +42,7 @@ interface InventoryProductProps {
             <Button 
                 onClick={detailClick}
                 className ="w-full mt-3"
-            >{btnLabel || "Add to Cart"}</Button>
+            >{btnLabel}</Button>
         </div>
     );
 };

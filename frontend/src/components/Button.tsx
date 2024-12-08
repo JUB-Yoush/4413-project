@@ -3,7 +3,7 @@ import React from 'react';
 {/* eslint-disable react/jsx-props-no-spreading */}
 import { forwardRef } from "react";
 import { type VariantProps } from "tailwind-variants";
-import {secButton, clickedButton, baseButton} from "./ButtonStyles";
+import {secButton, clickedButton, warnButton, baseButton} from "./ButtonStyles";
 
 // define all the button attributes
 type BaseButtonAttributes = React.ComponentPropsWithoutRef<"button">;
@@ -14,9 +14,9 @@ type Ref = HTMLButtonElement;
 // extend the base button attributes
 interface ButtonProps extends BaseButtonAttributes {
     disabled?: boolean;
-    buttonStyle?: VariantProps<typeof clickedButton |typeof secButton |typeof baseButton>;
+    buttonStyle?: VariantProps<typeof clickedButton |typeof secButton |typeof baseButton | typeof warnButton>;
     className?:string,
-    buttonVariant?: "clicked" | "sec";
+    buttonVariant?: "clicked" | "sec" | "warn";
 }
 // default values for Button {isLoading = false, disabled = false, leftIcon = undefined, rightIcon = undefined, buttonStyle = {}, buttonVariant = "clicked"}
 
@@ -33,6 +33,9 @@ const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
         }
         if(buttonVariant==="sec"){
             return secButton({...buttonStyle,className});
+        }
+        if(buttonVariant==="warn"){
+            return warnButton({...buttonStyle,className});
         }
         return baseButton({...buttonStyle,className});
     }

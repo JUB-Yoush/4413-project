@@ -12,6 +12,7 @@ const EditProductPage: React.FC = () => {
     const {id } = useParams<{ id: string }>() ?? {id:""};
     const [product, setProduct] = useState<Product>(location.state as Product);
     const [popupVisible, setPopupVisible] = useState(false); // Controls visibility
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     const [showForm, setShowForm] = useState(false);
     const [prodForm, setProdForm]
@@ -83,6 +84,27 @@ const EditProductPage: React.FC = () => {
             event.preventDefault();
         }
     }
+    function deleteProduct(event: React.FormEvent) {
+        if(id) {
+            axios({
+                method: "delete",
+                baseURL: 'http://127.0.0.1:5000', //can replace with personal port
+                url: `/catalog/products/${encodeURIComponent(id)}`
+            }).then(async () => {
+                setShowForm(false);
+                setShowConfirmation(false);
+                alert("Product Deleted!");
+                setTimeout(()=>{window.location.href = "/admin/inventory";},500);
+            }).catch((error) => {
+                if (error.response) {
+                    console.log(error.response);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                }
+            })
+            event.preventDefault();
+        }
+    }
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         // handle updating the prodForm state whenever a field changes
@@ -102,6 +124,7 @@ const EditProductPage: React.FC = () => {
     const fieldStyle = "bg-transparent w-full mt-1 py-1 px-2 border border-camel";
     const labelStyle = "text-sm";
 
+
     return (
         <>
             {/* Breadcrumb */}
@@ -115,23 +138,45 @@ const EditProductPage: React.FC = () => {
                 &nbsp;&nbsp;﹥
                 <p className="text-black">{prodForm.name}</p>
             </div>
-            <div className={"flex flex-row items-center"}>
+            <div className={"flex flex-row gap-6 items-center max-w-[730px]"}>
                 {showForm ?
                     <h1 className="text-3xl grow">Editing {prodForm.name}</h1>
                 :
                     <>
                     <h1 className="text-3xl grow">Viewing {prodForm.name}</h1>
-                    <Button onClick={()=>{setShowForm(true)}}>
+                    <Button className={"mt-0"} onClick={()=>{window.location.href="/admin/inventory"}}>
+                        Back</Button>
+                    <Button className={"mt-0"} onClick={()=>{setShowForm(true)}}>
                         Edit</Button>
                     </>
                 }
             </div>
-            <div className="mt-4 flex flex-row h-[calc(100vh-200px)]">
+            <div className="mt-4 flex flex-row overflow-y-auto">
 
+                {showConfirmation ?
+                    <div className={"z-10 flex absolute t-0 l-0 p-10 w-9/12 h-5/6 items-center justify-center bg-cream"}>
+                    <dialog open className={"bg-beige border border-camel flex flex-col gap-4 px-10 py-8 h-auto overflow-y-auto"}>
+                        <h1 className="text-xl text-center">Are you sure you want to delete this product?</h1>
+                        <div className={"flex flex-col h-5/6 items-center"}>
+                            <h1>{product.name}</h1>
+                            <p className="pt-4">$ {product.price.toFixed(2)}</p>
+                            <p className="pt-4 text-sm">{product.description}</p>
+                            <p className="pt-3 pb-5">In stock: {product.quantity}</p>
+
+                        </div>
+                        <div className={"flex flex-row gap-4 justify-center"}>
+                            <Button buttonVariant={"warn"} onClick={deleteProduct}>Yes</Button>
+                            <Button onClick={()=>{setShowConfirmation(false)}}>No</Button>
+                        </div>
+                    </dialog>
+                    </div>
+                        :
+                        <></>
+                }
                 {showForm ?
                 <form method={"post"}>
                     {/* Product */}
-                    <div className="basis-[75%] flex flex-row">
+                    <div className="flex flex-row">
                         {/* Product image */}
                         <div className="basis-1/3">
                             <div className="relative w-full pt-[100%] overflow-hidden">
@@ -157,12 +202,13 @@ const EditProductPage: React.FC = () => {
                         </div>
 
                         {/* Product Info */}
-                        <div className="basis-2/3 pl-8 pr-[80px] h-[calc(100vh-250px)] overflow-y-auto">
+                        <div className="pl-8 pr-[80px] overflow-y-auto">
                             {/* Product desc + checkout */}
                             <div>
                                 <div className="mb-4">
                                     <label
                                         htmlFor={"name"} className={labelStyle}>Name</label>
+
                                     <input
                                         id={"name"} name={"name"} value={prodForm.name} type={"text"} onChange={handleChange}
                                         placeholder={""} autoComplete={"on"}
@@ -230,6 +276,8 @@ const EditProductPage: React.FC = () => {
                                     </div>
                                     <Button type={"reset"} onClick={()=>{setShowForm(false)}}>
                                         Cancel</Button>
+                                    <Button buttonVariant={"warn"} onClick={()=>{setShowConfirmation(true)}}>
+                                        Delete Product</Button>
                                 </div>
                         </div>
 
@@ -272,7 +320,7 @@ const EditProductPage: React.FC = () => {
                     </div>
 
                     {/* Product Info */}
-                    <div className="basis-2/3 pl-8 border-r border-r-camel pr-[80px] h-[calc(100vh-250px)] overflow-y-auto scrollbar-hidden">
+                    <div className="pl-8 border-r border-r-camel pr-[80px] overflow-y-auto">
                         {/* Product desc + checkout */}
                         <div>
                             <h1 className="text-xl">{product.name}</h1>

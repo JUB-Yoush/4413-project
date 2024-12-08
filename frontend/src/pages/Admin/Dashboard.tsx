@@ -4,7 +4,6 @@ import {useSPAContext} from "../../components/Admin/AdminSPAContext.tsx";
 import Inventory from "./Inventory.tsx";
 import Orders from "./Orders.tsx";
 import Users from "./Users.tsx";
-import Sales from "./Sales.tsx";
 
 
 const Dashboard: React.FC = () => {
@@ -18,8 +17,6 @@ const Dashboard: React.FC = () => {
             return <Orders/>;
         }if(currentPage === "users"){
             return <Users/>;
-        }if(currentPage === "sales"){
-            return <Sales/>;
         }
     }
     return (

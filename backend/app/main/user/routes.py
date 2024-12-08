@@ -36,6 +36,60 @@ def add_cc():
         return jsonify({"error adding credit card to user": str(e)}), 500
 
 
+@user.route("/users", methods=["GET"])
+@admin_required
+def get_users():
+    try:
+        # get query parameters for filtering, sorting, and searching
+        fname = request.args.get("fname")
+        lname = request.args.get("lname")
+        email = request.args.get("email")
+        street = request.args.get("street")
+        city = request.args.get("city")
+        province = request.args.get("province")
+        postal_code = request.args.get("postal_code")
+        sort_by = request.args.get("sort_by", "name")
+        order = request.args.get("order", "asc")
+
+        print(
+            f"Query params: {fname}\n {lname} \n {email} \n {street} \n {city} "
+            f"\n {province} \n {postal_code} \n {sort_by} \n {order}"
+        )
+
+        # build query
+        query = Q()
+        if fname:
+            query &= Q(fname__like=fname)
+        if lname:
+            query &= Q(lname__like=lname)
+        if email:
+            query &= Q(email__like=email)
+        if street:
+            query &= Q(street__like=street)  # OR logic
+        if city:
+            query &= Q(city__like=city)
+        if province:
+            query &= Q(province__like=province)
+        if postal_code:
+            query &= Q(postal_code__like=postal_code)
+
+
+        users = User.objects(query)
+        print(users)
+        # sort results
+        sort_order = 1 if order == "asc" else -1
+        users = users.order_by(f"{'-' if sort_order == -1 else ''}{sort_by}")
+
+        users_json = []
+        print("formatting users")
+        for u in users:
+            users_json.append(u.json_formatted())
+
+        return jsonify({"users": users_json}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @user.route("/", methods=["GET"])
 @user_or_admin_required
 def get_user():
@@ -66,3 +120,18 @@ def edit_user():
         return jsonify({"message": "user info updated."}), 201
     except Exception as e:
         return jsonify({"error updating user data": str(e)}), 500
+
+
+@user.route("/<user_id>", methods=["PATCH"])
+@admin_required
+def edit_product(user_id):
+    data = request.json
+    try:
+        u = User.objects.get(id=user_id)
+        for key, value in data.items():
+            if hasattr(u, key):
+                setattr(u, key, value)
+        u.save()
+        return jsonify({"message": "updated u"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

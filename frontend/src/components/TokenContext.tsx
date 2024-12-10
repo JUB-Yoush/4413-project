@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
 
 // Define the type of the context
 interface TokenContextType {
@@ -32,7 +31,7 @@ export const TokenProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         localStorage.removeItem('userType');
         alert("You have been signed out");
         setTimeout(() => {
-            useNavigate()("/"); // Redirect to home or login page
+            window.location.href = "/"; // Redirect to home or login page
         }, 1000);
     };
 

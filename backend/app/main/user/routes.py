@@ -2,7 +2,9 @@ from flask import render_template, redirect, url_for, request, jsonify
 import datetime
 import jwt
 from . import user
+from mongoengine import Q
 import bcrypt
+from ...auth.session import generate_token
 from app.models import User, Product
 from app.auth.session import (
     get_user_from_token,
@@ -25,11 +27,14 @@ def add_cc():
     try:
         decryption_key = Fernet.generate_key().decode("utf-8")
         cipher = Fernet(decryption_key.encode("utf-8"))
+        print("1")
 
-        cc_string = data["card"]
+        cc_string = data["cc_info"]
+        print("12")
         encrypted_card = cipher.encrypt(cc_string.encode()).decode("utf-8")
         user.cc_info = encrypted_card
         user.decryption_key = decryption_key
+        print("13")
         user.save()
         return jsonify({"message": "Card information updated"}), 201
     except Exception as e:
@@ -72,7 +77,6 @@ def get_users():
             query &= Q(province__like=province)
         if postal_code:
             query &= Q(postal_code__like=postal_code)
-
 
         users = User.objects(query)
         print(users)
@@ -117,14 +121,15 @@ def edit_user():
                 setattr(user, key, value)
         user.save()
 
-        return jsonify({"message": "user info updated."}), 201
+        token = generate_token(data["email"])
+        return jsonify({"token": token}), 200
     except Exception as e:
         return jsonify({"error updating user data": str(e)}), 500
 
 
 @user.route("/<user_id>", methods=["PATCH"])
 @admin_required
-def edit_product(user_id):
+def edit_other_user(user_id):
     data = request.json
     try:
         u = User.objects.get(id=user_id)
@@ -135,3 +140,23 @@ def edit_product(user_id):
         return jsonify({"message": "updated u"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@user.route("/pw", methods=["PATCH"])
+@user_or_admin_required
+def edit_user_pw():
+    data = request.json
+    token = request.headers.get("Authorization")
+    payload = get_user_from_token(token)
+    user = get_referenced_user(payload)
+    try:
+        password = data["password"].encode("utf-8")  # Retrieve password from JSON data
+        # Hash password
+        h_password = bcrypt.hashpw(password, bcrypt.gensalt())
+        password = h_password.decode("utf-8")
+        user.password = password
+        user.save()
+
+        return jsonify({"message": "User Password edited"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

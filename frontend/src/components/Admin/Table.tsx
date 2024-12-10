@@ -18,7 +18,7 @@ interface TableContent{
 }
 
 const defaultTableContainerStyle = "max-w-11/12 h-5/6 overflow-auto"; //w-9/12
-const defaultTableStyle = "bg-beige border border-camel";
+const defaultTableStyle = "bg-beige border border-camel text-sm";
 const Table: React.FC<TableContent> = ({ columns, data }) => {
     return (
         <div className="overflow-x-auto">

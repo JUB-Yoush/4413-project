@@ -187,6 +187,7 @@ const Users: React.FC = () => {
             postal_code: [...new Set(tempuserPostals)], cart_total: [...new Set(tempuserCartTotals)]
            });
     }
+    useEffect(()=>{collateProxiesAndUsers()},[users]);
 
     const [options, setOptions] = useState([""]);
 

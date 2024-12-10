@@ -31,7 +31,6 @@ const LogInPage: React.FC = () => {
             setToken(response.data.token);
             setUserType("user");
             await handleCartMergeOnLogin();
-            window.location.href = "/"; //redirect them to merch page
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response);

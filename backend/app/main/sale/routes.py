@@ -10,6 +10,7 @@ from ...auth.session import (
     get_user_from_token,
     get_referenced_user,
     user_or_admin_required,
+    user_required,
 )
 
 
@@ -54,6 +55,54 @@ def get_sales():
         print("formatting sales")
         for sale in sales:
             sales_json.append(sale.json_formatted())
+
+        return jsonify({"sales": sales_json}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@sale.route("/orders", methods=["GET"])
+@user_required
+def get_my_orders():
+    token = request.headers.get("Authorization")
+    payload = get_user_from_token(token)
+    user = get_referenced_user(payload)
+    try:
+        # get query parameters for filtering, sorting, and searching
+        date = request.args.get("date")
+        product_name = request.args.get("product_name")
+        total_price = request.args.get("total_price")
+        sort_by = request.args.get("sort_by", "name")
+        order = request.args.get("order", "asc")
+        print(
+            f"Query params: {date}\n {product_name} \n {total_price} \n {sort_by} \n {order}"
+        )
+        # build query
+        query = Q()
+        # query &= Q(user__like=user)
+        # query a specific day
+        if date:
+            date = datetime.strptime(date, "%Y-%m-%d")  # Adjust format as needed
+            start_of_day = date
+            end_of_day = date + timedelta(days=1)
+            query &= Q(date__gte=start_of_day, date__lt=end_of_day)  # Use range query
+        if total_price:
+            query &= Q(total_price=float(total_price))
+        if product_name:
+            product = Product.objects(name=product_name).first()
+            query &= Q(purchases__product_id=product.id)
+
+        sales = Sale.objects(query)
+        print(sales)
+        # sort results
+        sort_order = 1 if order == "asc" else -1
+        sales = sales.order_by(f"{'-' if sort_order == -1 else ''}{sort_by}")
+
+        sales_json = []
+        print("formatting sales")
+        for sale in sales:
+            if sale.user.id == user.id:
+                sales_json.append(sale.json_formatted())
 
         return jsonify({"sales": sales_json}), 201
     except Exception as e:

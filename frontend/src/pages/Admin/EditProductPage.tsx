@@ -29,12 +29,11 @@ const EditProductPage: React.FC = () => {
         }).then(async (response) => {
             const resp = response.data;
             setProduct(resp); // Assuming API returns products array
-            console.log("Product Retrieved! ", product);
             setProdForm(
-                {id: product.id, name: product.name, category: product.category,
-                    brand: product.brand, album: product.album, price: product.price,
-                    description: product.description, image_url: product.image_url,
-                    quantity: product.quantity}
+                {id: resp.id, name: resp.name, category: resp.category,
+                    brand: resp.brand, album: resp.album, price: resp.price,
+                    description: resp.description, image_url: resp.image_url,
+                    quantity: resp.quantity}
             );
         }).catch((error) => {
             if (error.response) {
@@ -46,7 +45,9 @@ const EditProductPage: React.FC = () => {
     }
     useEffect(() => {
         // Reset product and fetch new data when route changes
-        if (id) getProduct(id);
+        if (id) {
+            getProduct(id);
+        }
 
         console.log("Product: ", product);
     }, [id]);
@@ -308,8 +309,8 @@ const EditProductPage: React.FC = () => {
                         <div className="relative w-full pt-[100%] overflow-hidden">
                             <Zoom zoomMargin={60}>
                                 <img
-                                    src={product.image_url}
-                                    alt={product.name}
+                                    src={prodForm.image_url}
+                                    alt={prodForm.name}
                                     className="absolute top-0 left-0 w-full h-full object-cover"
                                 />
                             </Zoom>
@@ -323,10 +324,10 @@ const EditProductPage: React.FC = () => {
                     <div className="pl-8 border-r border-r-camel pr-[80px] overflow-y-auto">
                         {/* Product desc + checkout */}
                         <div>
-                            <h1 className="text-xl">{product.name}</h1>
-                            <p className="pt-4">$ {product.price.toFixed(2)}</p>
-                            <p className="pt-4 text-sm">{product.description}</p>
-                            <p className="pt-3 pb-5">In stock: {product.quantity}</p>
+                            <h1 className="text-xl">{prodForm.name}</h1>
+                            <p className="pt-4">$ {prodForm.price.toFixed(2)}</p>
+                            <p className="pt-4 text-sm">{prodForm.description}</p>
+                            <p className="pt-3 pb-5">In stock: {prodForm.quantity}</p>
                         </div>
 
 

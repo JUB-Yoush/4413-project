@@ -13,7 +13,6 @@ from mongoengine import DoesNotExist
 from . import cart
 
 
-# shouldn't require user
 @cart.route("/", methods=["GET"])
 @user_or_admin_required
 def get_cart():

@@ -27,14 +27,11 @@ def add_cc():
     try:
         decryption_key = Fernet.generate_key().decode("utf-8")
         cipher = Fernet(decryption_key.encode("utf-8"))
-        print("1")
 
         cc_string = data["cc_info"]
-        print("12")
         encrypted_card = cipher.encrypt(cc_string.encode()).decode("utf-8")
         user.cc_info = encrypted_card
         user.decryption_key = decryption_key
-        print("13")
         user.save()
         return jsonify({"message": "Card information updated"}), 201
     except Exception as e:

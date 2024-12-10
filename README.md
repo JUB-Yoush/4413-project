@@ -12,8 +12,9 @@ git clone git@github.com/JUB-Yoush/4413-project.git
 
 4413 Project is Containerized with **Docker**, so running it is easy:
 
-1. Install: 
-- [Docker](https://docs.docker.com/engine/install/) 
+1. Install:
+
+- [Docker](https://docs.docker.com/engine/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/).
 
 2. Clone the repo.
@@ -25,20 +26,20 @@ git clone git@github.com/JUB-Yoush/4413-project.git
 3. cd into the project root and run the docker compose file.
 
 ```
-docker-compose up
+docker-compose up --build --no-cache
 ```
 
 #### Ports
 
-- Frontend runs on port ``3000``
-- Backend runs on port ``8000``
+- Frontend runs on port `3000`
+- Backend runs on port `8000`
 
 ## Running on your machine:
 
 ### Frontend
 
+1. Install
 
-1. Install 
 - [bun](https://bun.sh/)
 
 2. Then install dependencies
@@ -57,7 +58,8 @@ bun run dev
 
 ### Backend:
 
-2. Install 
+2. Install
+
 - [python3.12](https://www.python.org/downloads/release/python-3120/)
 - [venv](https://realpython.com/python-virtual-environments-a-primer/)
 
@@ -74,9 +76,11 @@ pip install -r requirements.txt
 ```
 flask run
 ```
+
 ## Frontend:
 
 This project uses:
+
 - **Bun**: Javascript runtime environment
 - **React**: UI
 - **TypeScript**: Javascript with static typing
@@ -87,6 +91,7 @@ This project uses:
 ## Backend:
 
 This project uses:
+
 - **Python**: Programming Language
 - **Flask**: Web Server framework for python
 - **Ruff**: Python Linter

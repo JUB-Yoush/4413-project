@@ -62,7 +62,6 @@ const Users: React.FC = () => {
 
     function editUser(event: React.FormEvent) {
         // handle sending info to flask once the form is submitted
-        // if(user.id) {
             axios({
                 method: "patch",
                 baseURL: 'http://127.0.0.1:5000', //can replace with personal port
@@ -75,9 +74,6 @@ const Users: React.FC = () => {
                     city: userForm.city,
                     province: userForm.province,
                     postal_code: userForm.postal_code,
-                    // cart_items: userForm.cart_items,
-                    // cart_total: userForm.cart_total
-
                 }
             }).then(async () => {
                 setShowForm(false);
@@ -150,20 +146,20 @@ const Users: React.FC = () => {
 
         forEach(users, (u)=>{
             // const currID = u.id;
-            const currFname = u.fname;
-            const currLname = u.lname;
-            const currEmail = u.email;
+            const currFname = u.fname.toLowerCase();
+            const currLname = u.lname.toLowerCase();
+            const currEmail = u.email.toLowerCase();
             // const currPW = u.password;
-            const currStreet = u.street;
-            const currCity = u.city;
-            const currPostal = u.postal_code;
-            const currProvince = u.province;
+            const currStreet = u.street.toLowerCase();
+            const currCity = u.city.toLowerCase();
+            const currPostal = u.postal_code.toLowerCase();
+            const currProvince = u.province.toLowerCase();
             // const currCC = u.cc_info;
             // const currDK = u.decryption_key;
             // const currCartItems = u.cart_items;
-            const currCartTotal = u.cart_total;
+            const currCartTotal = Number(u.cart_total.toFixed(2));
 
-            temp.push(u);
+            temp.push({...u, cart_total: currCartTotal});
 
             // tempuserIDs.push(currID);
             tempuserFnames.push(currFname);
@@ -201,7 +197,7 @@ const Users: React.FC = () => {
 
         const temp: User[] = [];
         forEach(users, (u)=>{
-            if(u[filter.column]===option) temp.push(u);
+            if(u[filter.column].toLowerCase()===option.toLowerCase()) temp.push(u);
         });
         setUserProxies(temp);
     }
@@ -269,29 +265,6 @@ const Users: React.FC = () => {
                                                 className={fieldStyle}/>
                                         </div>
                                     </div>
-                                    {/*/!*Payment Information Section*!/*/}
-                                    {/*<p className={"text-3xl mb-6 mt-4"}>Payment Information</p>*/}
-                                    {/*<div className={"grid grid-cols-2 gap-4 w-auto"}>*/}
-                                    {/*    <div className={labelDivStyle}>*/}
-                                    {/*        <label htmlFor={"creditcard"}>Saved Credit Card</label>*/}
-                                    {/*        <input*/}
-                                    {/*            id={"email"} name={"email"} value={userForm.email} type={"email"}*/}
-                                    {/*            onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
-                                    {/*            className={fieldStyle}/>*/}
-                                    {/*        <p className={pStyle}>**********</p>*/}
-                                    {/*    </div>*/}
-                                    {/*    <div className={labelDivStyle}>*/}
-                                    {/*        <label htmlFor={"expiry"}>Expiry Date</label>*/}
-                                    {/*        <input*/}
-                                    {/*            id={"email"} name={"email"} value={userForm.email} type={"email"}*/}
-                                    {/*            onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
-                                    {/*            className={fieldStyle}/>*/}
-                                    {/*        <p className={pStyle}>**//**</p>*/}
-                                    {/*    </div>*/}
-                                    {/*    <div className={labelDivStyle}>*/}
-                                    {/*        <Button >Add Another Card</Button>*/}
-                                    {/*    </div>*/}
-                                    {/*</div>*/}
 
                                     {/*Shipping Address Section*/}
                                     <p className={"text-3xl mb-6 mt-4"}>Shipping Address</p>

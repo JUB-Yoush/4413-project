@@ -15,35 +15,11 @@ const Orders: React.FC = () => {
             "decryption_key": "", "email": "defaultOrder.co", "fname": "Fname", "id": "",
             "lname": "", "password": "", "postal_code": "", "province": "", "street": ""}
     }; //default order structure to be used by objects with state
-    const defaultOrder2: Order = {
-        "id": "100", "approved": true, "date": "Wed,20 Nov, 2024",
-        "purchases": [{"image_url": "", "name": "defaultOrder2Item", "price": 0.00, "product_id": "",
-            "quantity": 1, "total_price": 0.00}],
-        "user": {"cart_items": [], "cart_total": 0.0, "cc_info": "", "city": "",
-            "decryption_key": "", "email": "defaultOrder2.co", "fname": "Fname", "id": "",
-            "lname": "", "password": "", "postal_code": "", "province": "", "street": ""}
-    };
-    const defaultOrder3: Order = {
-        "id": "110", "approved": false, "date": "Wed,21 Nov, 2024",
-        "purchases": [{"image_url": "", "name": "defaultOrder3Item", "price": 0.00, "product_id": "",
-            "quantity": 2, "total_price": 0.00}],
-        "user": {"cart_items": [], "cart_total": 0.0, "cc_info": "", "city": "",
-            "decryption_key": "", "email": "defaultOrder3.de", "fname": "Fname", "id": "",
-            "lname": "", "password": "", "postal_code": "", "province": "", "street": ""}
-    };
-    const defaultOrder4: Order = {
-        "id": "120", "approved": true, "date": "Wed,22 Nov, 2024",
-        "purchases": [{"image_url": "", "name": "defaultOrder4Item", "price": 0.00, "product_id": "",
-            "quantity": 3, "total_price": 0.00}],
-        "user": {"cart_items": [], "cart_total": 0.0, "cc_info": "", "city": "",
-            "decryption_key": "", "email": "defaultOrder4.c", "fname": "Fname", "id": "",
-            "lname": "", "password": "", "postal_code": "", "province": "", "street": ""}
-    };
 
     const [showDialog, setShowDialog]
         = useState(false);
     const [orders, setOrders] = useState<Order[]>(
-        [defaultOrder, defaultOrder2,defaultOrder3,defaultOrder4]);
+        []);
     // order to be passed to dialog box for editing
     const [order, setOrder] = useState<Order>(defaultOrder);
 

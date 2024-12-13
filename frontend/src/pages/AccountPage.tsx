@@ -1,9 +1,16 @@
 import React, {useEffect, useState} from 'react';
+import {useForm, FormProvider} from "react-hook-form";
 import AccountSidebar from "../components/AccountSidebar.tsx";
 import axios from "axios";
 import {User} from "../types.ts";
 import Button from "../components/Button.tsx";
 import {useTokenContext} from "../components/TokenContext.tsx";
+import Input from "../components/Input.tsx";
+import {
+    email_validation,
+    new_pw_validation, postal_code_validation,
+    province_validation, pw_validation, street_validation, text_only_validation
+} from "../components/InputValidations.tsx";
 
 const AccountPage: React.FC = () => {
     interface AccountInfo{
@@ -73,7 +80,7 @@ const AccountPage: React.FC = () => {
             const resp = response.data;
             setUser(resp);
 
-            console.log("frist "+resp.user.fname);
+            console.log("User Updated "+resp.user.fname);
             setAcctData(({
                 fname: resp.user.fname,
                 lname: resp.user.lname,
@@ -97,18 +104,20 @@ const AccountPage: React.FC = () => {
             }
         })
     }
-    function editUserOther(event: React.FormEvent) {
+    const methods = useForm();
+
+    const editUserOther = methods.handleSubmit(() => {
         // handle sending info to flask once the form is submitted
         axios({
             method: "patch",
             baseURL: 'http://127.0.0.1:5000',
             url: `/user/`,
             data: {
-                email: accountData.email,
-                street: accountData.street,
-                city: accountData.city,
-                province: accountData.province,
-                postal_code: accountData.postal_code
+                email: accountData.email.trim(),
+                street: accountData.street.trim(),
+                city: accountData.city.trim(),
+                province: accountData.province.trim(),
+                postal_code: accountData.postal_code.trim()
             }
         }).then((response) => {
             setToken(response.data.token);
@@ -121,18 +130,16 @@ const AccountPage: React.FC = () => {
                 console.log(error.response.headers);
             }
         })
-        event.preventDefault();
-    }
+    });
     const [oldPWMatches, setOldPWMatches] = useState(false);
-    function editUserPW(event: React.FormEvent) {
-
+    const editUserPW = methods.handleSubmit(() => {
         axios({
             method: "post",
             baseURL: 'http://127.0.0.1:5000', //can replace with personal port
             url: "/login", //flask route that handles login auth
             data: {
-                email: accountData.email,
-                password: accountData.old_password,
+                email: accountData.email.trim(),
+                password: accountData.old_password.trim(),
             }
         }).then(async () => {
             setOldPWMatches(true);
@@ -158,7 +165,7 @@ const AccountPage: React.FC = () => {
                 baseURL: 'http://127.0.0.1:5000',
                 url: `/user/pw`,
                 data: {
-                    password: accountData.password,
+                    password: accountData.password.trim(),
                 }
             }).then(async () => {
                 setAcctData(prevNote => ({
@@ -174,16 +181,16 @@ const AccountPage: React.FC = () => {
                     console.log(error.response.headers);
                 }
             })
-            event.preventDefault();
         }else{
             /*
             * show error message to enter correct creds
             * */
             alert("ERROR: Please ensure all credentials are correct.")
+            console.log(`old matches ${oldPWMatches}, new matches ${newPWMatches}`)
         }
 
-    }
-    function editUserCC(event: React.FormEvent) {
+    });
+    const editUserCC = methods.handleSubmit(() => {
         // card data send in "xxxxxxxxxxxxxxxx-xxxx-xxx" (16 nums, exp(mmyy),cvv), one string
         axios({
             method: "patch",
@@ -202,18 +209,18 @@ const AccountPage: React.FC = () => {
                 console.log(error.response.headers);
             }
         })
-        event.preventDefault();
-    }
+    });
 
     function showDD() {setIsEditOther(true)}
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        // handle updating the userForm state whenever a field changes
+        // handle updating the accountData state whenever a field changes
         const {value, name} = event.target
         setAcctData(prevNote => ({
                 ...prevNote, [name]: value
             })
-        )
+        );
+        methods.trigger(name);
     }
     const labelDivStyle = "mb-4 w-full";
     const fieldStyle = "text-camel bg-transparent w-full mt-1 py-1 px-2 border border-camel";
@@ -239,56 +246,31 @@ const AccountPage: React.FC = () => {
                                     Close Without Saving</Button>
                             </div>
 
-                            <form method={"post"}>
+                            <FormProvider {...methods}>
+                            <form noValidate onSubmit={e => e.preventDefault()}>
                                 <div className="grid items-center min-w-full">
 
                                     {/*Account Section*/}
                                     <p className={"text-3xl mb-6"}>Editing Your Details</p>
                                     <div className={"grid grid-cols-2 gap-4"}>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"email"}>Email Address</label>
-                                            <input
-                                                id={"email"} name={"email"} value={accountData.email} type={"email"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
+                                        <Input value={accountData.email} {...email_validation({handleChange})}/>
                                     </div>
 
                                     {/*Shipping Address Section*/}
                                     <p className={"text-3xl mb-6 mt-4"}>Shipping Address</p>
                                     <div className={"grid grid-cols-2 gap-4 w-auto"}>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"street"}>Street Address</label>
-                                            <input
-                                                id={"street"} name={"street"} value={accountData.street} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"city"}>City</label>
-                                            <input
-                                                id={"city"} name={"city"} value={accountData.city} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"province"}>Province</label>
-                                            <input
-                                                id={"province"} name={"province"} value={accountData.province} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"postal_code"}>Postal Code</label>
-                                            <input
-                                                id={"postal_code"} name={"postal_code"} value={accountData.postal_code} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
+                                        <Input value={accountData.street} {...street_validation({handleChange })}/>
+                                        <Input id={"city"} name={"city"} value={accountData.city} type={"text"}
+                                               htmlFor={"city"} label={"City"}
+                                               {...text_only_validation({handleChange })}
+                                        />
+                                        <Input value={accountData.province} {...province_validation({handleChange})}/>
+                                        <Input value={accountData.postal_code} {...postal_code_validation({handleChange})}/>
                                     </div>
                                     <Button onClick={editUserOther}>Save Edit</Button>
                                 </div>
                             </form>
+                            </FormProvider>
                             </dialog>
                         </div>
                         :
@@ -304,38 +286,58 @@ const AccountPage: React.FC = () => {
                                     Close Without Saving</Button>
                             </div>
 
-                            <form method={"post"}>
+                            <FormProvider {...methods}>
+                            <form noValidate onSubmit={e => e.preventDefault()}>
                                 <div className="grid items-center min-w-full">
 
                                     {/*Account Section*/}
                                     <p className={"text-3xl mb-6"}>Editing Your Password</p>
                                     <div className={"grid grid-cols-2 gap-4"}>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"old_password"}>Old Password</label>
-                                            <input
-                                                id={"old_password"} name={"old_password"} value={accountData.old_password} type={"password"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"off"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"password"}>New Password</label>
-                                            <input
-                                                id={"password"} name={"password"} value={accountData.password} type={"password"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"confirm_password"}>Confirm Your Password</label>
-                                            <input
-                                                id={"confirm_password"} name={"confirm_password"}
-                                                value={accountData.confirm_password} type={"password"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"off"}
-                                                className={fieldStyle}/>
-                                        </div>
+                                        {/*id: 'password',*/}
+                                        {/*name: 'password',*/}
+                                        {/*type: 'password',*/}
+                                        {/*htmlFor: "password",*/}
+                                        {/*label: 'Password',*/}
+                                        <Input value={accountData.old_password} {...pw_validation({handleChange})}
+                                               id={"old_password"} name={"old_password"}
+                                               label={"Old Password"} htmlFor={"old_password"}
+                                        />
+                                        <Input value={accountData.password} {...new_pw_validation({handleChange})}
+                                               label={"New Password"}
+                                        />
+
+                                        <Input value={accountData.confirm_password} {...new_pw_validation({handleChange})}
+                                               id={"confirm_password"} name={"confirm_password"}
+                                               label={"Confirm Your Password"} htmlFor={"confirm_password"}
+                                        />
+
+                                        {/*<div className={labelDivStyle}>*/}
+                                        {/*    <label htmlFor={"old_password"}>Old Password</label>*/}
+                                        {/*    <input*/}
+                                        {/*        id={"old_password"} name={"old_password"} value={accountData.old_password} type={"password"}*/}
+                                        {/*        onChange={handleChange} placeholder={""} autoComplete={"off"}*/}
+                                        {/*        className={fieldStyle}/>*/}
+                                        {/*</div>*/}
+                                        {/*<div className={labelDivStyle}>*/}
+                                        {/*    <label htmlFor={"password"}>New Password</label>*/}
+                                        {/*    <input*/}
+                                        {/*        id={"password"} name={"password"} value={accountData.password} type={"password"}*/}
+                                        {/*        onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
+                                        {/*        className={fieldStyle}/>*/}
+                                        {/*</div>*/}
+                                        {/*<div className={labelDivStyle}>*/}
+                                        {/*    <label htmlFor={"confirm_password"}>Confirm Your Password</label>*/}
+                                        {/*    <input*/}
+                                        {/*        id={"confirm_password"} name={"confirm_password"}*/}
+                                        {/*        value={accountData.confirm_password} type={"password"}*/}
+                                        {/*        onChange={handleChange} placeholder={""} autoComplete={"off"}*/}
+                                        {/*        className={fieldStyle}/>*/}
+                                        {/*</div>*/}
                                     </div>
                                     <Button onClick={editUserPW}>Save Edit</Button>
                                 </div>
                             </form>
+                            </FormProvider>
                             </dialog>
                         </div>
                         :
@@ -352,7 +354,7 @@ const AccountPage: React.FC = () => {
                                         Close Without Saving</Button>
                                 </div>
 
-                                <form method={"post"}>
+                                <form>
                                     <div className="grid items-center min-w-full">
                                         <p className={"text-3xl mb-6"}>Editing Your Creditcard</p>
 
@@ -362,7 +364,7 @@ const AccountPage: React.FC = () => {
                                                 <label htmlFor={"cc_info"}>Credit Card Number</label>
                                                 <p className={pStyle_desc}>16 digits, no space</p>
                                                 <input
-                                                    id={"cc_info"} name={"cc_info"} value={accountData.cc_info} type={"text"}
+                                                    id={"cc_info"} name={"cc_info"} value={accountData.cc_info.trim()} type={"text"}
                                                     onChange={handleChange} placeholder={""} autoComplete={"on"}
                                                     className={fieldStyle}/>
                                             </div>
@@ -370,7 +372,7 @@ const AccountPage: React.FC = () => {
                                                 <label htmlFor={"expiry"}>Expiry Date (MMYY)</label>
                                                 <p className={pStyle_desc}>2 digits for the month and 2 for the year</p>
                                                 <input
-                                                    id={"expiry"} name={"expiry"} value={accountData.expiry} type={"text"}
+                                                    id={"expiry"} name={"expiry"} value={accountData.expiry.trim()} type={"text"}
                                                     onChange={handleChange} placeholder={""} autoComplete={"on"}
                                                     className={fieldStyle}/>
                                             </div>
@@ -378,7 +380,7 @@ const AccountPage: React.FC = () => {
                                                 <label htmlFor={"cvv"}>CVV (NNN)</label>
                                                 <p className={pStyle_desc}>The 3 digits behind your creditcard</p>
                                                 <input
-                                                    id={"cvv"} name={"cvv"} value={accountData.cvv} type={"text"}
+                                                    id={"cvv"} name={"cvv"} value={accountData.cvv.trim()} type={"text"}
                                                     onChange={handleChange} placeholder={""} autoComplete={"on"}
                                                     className={fieldStyle}/>
                                             </div>

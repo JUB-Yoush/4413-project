@@ -13,7 +13,6 @@ interface NavLink {
 // Sample navigation links
 const navLinks: NavLink[] = [
   { name: 'Merch', href: '/catalog/products' },
-  { name: 'Tour Dates', href: '/tour' },
   { name: 'Contact', href: '/contact' }
 ];
 

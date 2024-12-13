@@ -13,7 +13,6 @@ const ProfileDropdown: React.FC = () => {
 
     function logOut() {
         removeToken(); //also redirects them to merch page
-        alert("You have been signed out");
     }
 
     return (

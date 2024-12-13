@@ -32,7 +32,7 @@ export const TokenProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         alert("You have been signed out");
         setTimeout(() => {
             window.location.href = "/"; // Redirect to home or login page
-        }, 1000);
+        }, 100);
     };
 
     const setUserType = (type: string) => {

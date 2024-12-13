@@ -56,8 +56,8 @@ const LogInPage: React.FC = () => {
     }
 
     return (
-        <form className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" method={"post"}>
-            <Logo size={48}></Logo>
+        <form className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" >
+            <div className="flex justify-center"><Logo size={48} ></Logo></div>
             <div className="mb-4">
                 <label
                     htmlFor={"email"}>Email Address</label>

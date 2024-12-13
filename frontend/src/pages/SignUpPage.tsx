@@ -3,7 +3,12 @@ import Googollogo from "../assets/Googollogo.png";
 import Logo from "../components/Logo.tsx";
 import Button from "../components/Button.tsx";
 import axios from "axios";
-
+import Input from "../components/Input.tsx";
+import {
+    email_validation, new_pw_validation,
+} from "../components/InputValidations.tsx";
+import {FormProvider, useForm} from "react-hook-form";
+import {fname_validation, lname_validation} from "../components/InputValidations.tsx";
 
 const SignUpPage: React.FC = () => {
 
@@ -21,22 +26,23 @@ const SignUpPage: React.FC = () => {
                 province: "",
                 postal: ""
             });
-    function signUp(event: React.FormEvent) {
+    const methods = useForm();
+    const signUp = methods.handleSubmit(() => {
         // handle sending info to flask once the form is submitted
         axios({
             method: "post",
             baseURL: 'http://127.0.0.1:5000', //can replace with personal port
             url: "/signup", //flask route that handles signup auth
             data: {
-                email: signUpForm.email,
-                password: signUpForm.password,
-                fname: signUpForm.fname,
-                lname: signUpForm.lname,
-                card: signUpForm.card,
-                street: signUpForm.street,
-                city: signUpForm.city,
-                province: signUpForm.province,
-                postal: signUpForm.postal
+                email: signUpForm.email.trim(),
+                password: signUpForm.password.trim(),
+                fname: signUpForm.fname.trim(),
+                lname: signUpForm.lname.trim(),
+                card: signUpForm.card.trim(),
+                street: signUpForm.street.trim(),
+                city: signUpForm.city.trim(),
+                province: signUpForm.province.trim(),
+                postal: signUpForm.postal.trim()
             }
         }).then(async () => {
             console.log("sign up run" + signUpForm.email +". Now log in.");
@@ -60,47 +66,26 @@ const SignUpPage: React.FC = () => {
             province: "",
             postal: ""
         }))
-        event.preventDefault();
-    }
+    });
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         // handle updating the signUpForm state whenever a field changes
         const {value, name} = event.target
         setSignUpForm(prevNote => ({
             ...prevNote, [name]: value})
-        )}
+        );
+        methods.trigger(name);
+    }
 
     return (
-        <form className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
-            <Logo size={48}></Logo>
-            <div className="mb-4 w-full">
-                <label
-                    htmlFor={"fname"}>First Name</label>
-                <input
-                    id={"fname"} type={"text"} name={"fname"} value={signUpForm.fname} onChange={handleChange} placeholder={""} autoComplete={"on"}
-                    className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
-            </div>
-            <div className="mb-4 w-full">
-                <label
-                    htmlFor={"lname"}>Last Name</label>
-                <input
-                    id={"lname"} type={"text"} name={"lname"} value={signUpForm.lname} onChange={handleChange} placeholder={""} autoComplete={"on"}
-                    className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
-            </div>
-            <div className="mb-4">
-                <label
-                    htmlFor={"email"}>Email Address</label>
-                <input
-                    id={"email"} type={"email"} name={"email"} value={signUpForm.email} onChange={handleChange} placeholder={""} autoComplete={"on"}
-                    className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
-            </div>
-            <div className="mb-4 w-full">
-                <label
-                    htmlFor={"password"}>Password</label>
-                <input
-                    id={"password"} type={"password"} name={"password"} value={signUpForm.password} onChange={handleChange} placeholder={""} autoComplete={"on"}
-                    className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
-            </div>
+        <FormProvider {...methods}>
+        <form noValidate onSubmit={e => e.preventDefault()}
+            className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
+            <div className="flex mb-4 justify-center"><Logo size={48} ></Logo></div>
+            <Input value={signUpForm.fname} {...fname_validation({handleChange})}/>
+            <Input value={signUpForm.lname} {...lname_validation({handleChange})}/>
+            <Input value={signUpForm.email} {...email_validation({handleChange})}/>
+            <Input value={signUpForm.password} {...new_pw_validation({handleChange})}/>
             <div className="mb-4 w-full grid justify-center items-center">
                 <Button type={"submit"} onClick={signUp}>Sign Up</Button>
             </div>
@@ -117,6 +102,7 @@ const SignUpPage: React.FC = () => {
                 </div>
             </div>
         </form>
+        </FormProvider>
     );
 };
 

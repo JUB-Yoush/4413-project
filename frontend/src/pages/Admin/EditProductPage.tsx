@@ -175,7 +175,7 @@ const EditProductPage: React.FC = () => {
                         <></>
                 }
                 {showForm ?
-                <form method={"post"}>
+                <form >
                     {/* Product */}
                     <div className="flex flex-row">
                         {/* Product image */}

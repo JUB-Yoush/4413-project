@@ -6,6 +6,12 @@ import Button from "../../components/Button.tsx";
 import {useState} from 'react';
 import axios from 'axios';
 import {useTokenContext} from "../../components/TokenContext.tsx";
+import {useForm, FormProvider} from "react-hook-form";
+
+import Input from "../../components/Input.tsx";
+import {
+    email_validation, pw_validation
+} from "../../components/InputValidations.tsx";
 
 const AdminLogInPage: React.FC = () => {
     const {setToken, setUserType} = useTokenContext();
@@ -14,7 +20,8 @@ const AdminLogInPage: React.FC = () => {
     const [loginForm, setLoginForm]
         = useState({email: "", password: ""});
 
-    function logIn(event: React.FormEvent) {
+    const methods = useForm();
+    const logIn = methods.handleSubmit(() => {
         // handle sending info to flask once the form is submitted
         axios({
             method: "post",
@@ -41,8 +48,7 @@ const AdminLogInPage: React.FC = () => {
             email: "",
             password: ""
         }))
-        event.preventDefault();
-    }
+    })
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         // handle updating the loginForm state whenever a field changes
@@ -50,30 +56,21 @@ const AdminLogInPage: React.FC = () => {
         setLoginForm(prevNote => ({
                 ...prevNote, [name]: value
             })
-        )
+        );
+        methods.trigger(name);
     }
 
     return (
         <div className={"min-w-full flex-grow"}>
-        <form className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" method={"post"}>
-            <Logo size={48}></Logo>
+        <FormProvider {...methods}>
+        <form noValidate onSubmit={e => e.preventDefault()}
+              className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" >
+            <div className="flex justify-center"><Logo size={48} ></Logo></div>
             <p className="flex mb-4 justify-center">Admin</p>
-            <div className="mb-4">
-                <label
-                    htmlFor={"email"}>Email Address</label>
-                <input
-                    id={"email"} name={"email"} value={loginForm.email} type={"email"} onChange={handleChange}
-                    placeholder={""} autoComplete={"on"}
-                    className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
-            </div>
-            <div className="mb-4 w-full">
-                <label
-                    htmlFor={"password"}>Password</label>
-                <input
-                    id={"password"} name={"password"} value={loginForm.password} type={"password"}
-                    onChange={handleChange} placeholder={""} autoComplete={"on"}
-                    className={"bg-transparent w-full mt-1 py-1 px-2 border border-camel"}/>
-            </div>
+
+            <Input value={loginForm.email} {...email_validation({handleChange})}/>
+            <Input value={loginForm.password} {...pw_validation({handleChange})}/>
+
             <div className="mb-4 w-full grid justify-center items-center">
                 <Button type={"submit"} onClick={logIn}>Log In</Button>
             </div>
@@ -96,6 +93,7 @@ const AdminLogInPage: React.FC = () => {
                 </div>
             </div>
         </form>
+        </FormProvider>
         </div>
     );
 };

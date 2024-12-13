@@ -8,7 +8,6 @@ import AccountPage from "./pages/AccountPage.tsx";
 import OrderHistory from "./pages/OrderHistory.tsx";
 import DetailPage from "./pages/DetailPage.tsx";
 import MerchPage from "./pages/MerchPage.tsx";
-import TourPage from "./pages/TourPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import Footer from "./components/Footer.tsx";
 import CartPage from "./pages/CartPage.tsx";
@@ -69,7 +68,6 @@ const App: React.FC = () => {
                     <Route path="/catalog/products" element={<MerchPage searchQuery={searchQuery}/>} />
                     <Route path="/catalog/products/:name" element={<DetailPage />} />
                     <Route path="/cart" element={<CartPage />} />
-                    <Route path="/tour" element={<TourPage searchQuery={searchQuery}/>} />
 
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="*" element={<RouteNotFound url={"/"} label={"Back to Home"}/>} />

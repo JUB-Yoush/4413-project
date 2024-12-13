@@ -138,7 +138,7 @@ const AddProductPage: React.FC = () => {
 
     return (
         <div className={"min-w-full flex-grow"}>
-            <form className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center" method={"post"}>
+            <form className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
                 <h1 className="text-3xl mb-4">Add a Product to Inventory</h1>
                 <div className="mb-4">
                     <label

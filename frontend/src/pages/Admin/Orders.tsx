@@ -64,8 +64,19 @@ const Orders: React.FC = () => {
     * - unique Purchases
     * - unique Approved
     * */
+    interface DDValuesType{
+        id: string[],
+        date: string[],
+        user: string[],
+        purchases: string[],
+        approved: string[],
+        total_price: string[],
+        [key:string]: string[]
+    }
+
     const [ddValues, setDDValues]
-        = useState({id: [""], date: [""], user: [""], purchases: [""], approved: [""], total_price:[""]}
+        = useState<DDValuesType>(
+            {id: [""], date: [""], user: [""], purchases: [""], approved: [""], total_price:[""]}
     );
 
     //update orderProxies and column filtering options
@@ -229,66 +240,30 @@ const Orders: React.FC = () => {
                             <Button onClick={()=>{setShowDialog(false);}}>Close</Button>
                         </div>
 
-                        {/*{showForm ?*/}
-                        {/*    <form method={"post"}>*/}
-                        {/*        <div className="grid items-center min-w-full">*/}
-
-                        {/*            /!*Account Section*!/*/}
-                        {/*            <p className={"text-3xl mb-6"}>Editing Order</p>*/}
-                        {/*            <div className={"grid grid-cols-2 gap-4"}>*/}
-                        {/*                <div className={labelDivStyle}>*/}
-                        {/*                    <label htmlFor={"date"}>Date</label>*/}
-                        {/*                    <input*/}
-                        {/*                        id={"date"} name={"date"} value={orderForm.date} type={"text"}*/}
-                        {/*                        onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
-                        {/*                        className={fieldStyle}/>*/}
-                        {/*                </div>*/}
-                        {/*                <div className={labelDivStyle}>*/}
-                        {/*                    <label htmlFor={"email"}>User Email</label>*/}
-                        {/*                    <input*/}
-                        {/*                        id={"email"} name={"email"} value={orderForm.user.email} type={"email"}*/}
-                        {/*                        onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
-                        {/*                        className={fieldStyle}/>*/}
-                        {/*                </div>*/}
-                        {/*                <div className={labelDivStyle}>*/}
-                        {/*                    <label htmlFor={"purchases"}>Purchases</label>*/}
-                        {/*                    <input*/}
-                        {/*                        id={"purchases"} name={"purchases"} value={orderForm.purchases[0].image_url} type={"email"}*/}
-                        {/*                        onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
-                        {/*                        className={fieldStyle}/>*/}
-                        {/*                </div>*/}
-                        {/*            </div>*/}
-                        {/*            <Button onClick={editOrder}>Save Order Edit</Button>*/}
-                        {/*        </div>*/}
-                        {/*    </form>*/}
-
-
-                        {/*    :*/}
-
-                            {/*// only show user account details, no edit*/}
-                            <div className="grid items-center min-w-full">
-                                {/*px-8 pt-6 pb-8 mb-4 h-auto w-full */}
-                                {/*Account Section*/}
-                                <p className={"text-3xl mb-6"}>Viewing Order</p>
-                                <div className={"grid grid-cols-2 gap-4"}>
-                                    <div className={labelDivStyle}>
-                                        <label htmlFor={"date"}>Date</label>
-                                        <p className={pStyle}>{orderForm.date}</p>
-                                    </div>
-                                    <div className={labelDivStyle}>
-                                        <label htmlFor={"email"}>User Email</label>
-                                        <p className={pStyle}>{orderForm.user.email}</p>
-                                    </div>
-                                    <div className={labelDivStyle}>
-                                        <label htmlFor={"purchases"}>Purchases</label>
-                                        <p className={pStyle}>{`(${orderForm.purchases[0].quantity}) ${orderForm.purchases[0].name}`}</p>
-                                    </div>
-                                    <div className={labelDivStyle}>
-                                        <label htmlFor={"approved"}>Approval State</label>
-                                        <p className={pStyle}>{orderForm.approved}</p>
-                                    </div>
+                        {/*// only show user account details, no edit*/}
+                        <div className="grid items-center min-w-full">
+                            {/*px-8 pt-6 pb-8 mb-4 h-auto w-full */}
+                            {/*Account Section*/}
+                            <p className={"text-3xl mb-6"}>Viewing Order</p>
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={labelDivStyle}>
+                                    <label htmlFor={"date"}>Date</label>
+                                    <p className={pStyle}>{orderForm.date}</p>
+                                </div>
+                                <div className={labelDivStyle}>
+                                    <label htmlFor={"email"}>User Email</label>
+                                    <p className={pStyle}>{orderForm.user.email}</p>
+                                </div>
+                                <div className={labelDivStyle}>
+                                    <label htmlFor={"purchases"}>Purchases</label>
+                                    <p className={pStyle}>{`(${orderForm.purchases[0].quantity}) ${orderForm.purchases[0].name}`}</p>
+                                </div>
+                                <div className={labelDivStyle}>
+                                    <label htmlFor={"approved"}>Approval State</label>
+                                    <p className={pStyle}>{orderForm.approved}</p>
                                 </div>
                             </div>
+                        </div>
                     </dialog>
                 </div>
                 :

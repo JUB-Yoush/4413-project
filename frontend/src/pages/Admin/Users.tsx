@@ -1,10 +1,18 @@
 import React, {useEffect, useState} from "react";
+import {useForm, FormProvider} from "react-hook-form";
 import {UserTable} from "../../components/Admin/Table.tsx";
 import axios from "axios";
 import Button from "../../components/Button.tsx";
 import {User} from "../../types.ts";
 import TableDropDown from "../../components/Admin/TableDropDown.tsx";
 import {forEach} from "lodash";
+import Input from "../../components/Input.tsx";
+import {
+    email_validation,
+    fname_validation,
+    lname_validation, postal_code_validation,
+    province_validation, street_validation, text_only_validation
+} from "../../components/InputValidations.tsx";
 const Users: React.FC = () => {
 
     const defaultUser: User = {
@@ -47,55 +55,63 @@ const Users: React.FC = () => {
             }
         })
     }
+    useEffect(()=>{getUsers()},[]);
+
     const defaultUserForm = {
         "id": user.id, "fname": user.fname, "lname": user.lname,
         "email": user.email, "password": user.password,
         "cc_info": user.cc_info, "street": user.street, "city": user.city,
-        "province": user.province, "postal_code": user.postal_code,
+        "province": user.province, "postal_code": user.postal_code.toUpperCase(),
         "cart_items": user.cart_items, "cart_total": user.cart_total,
     };
 
     const [userForm, setUserForm]
         = useState(defaultUserForm);
 
-    useEffect(()=>{setUserForm(defaultUserForm);},[user]);
+    useEffect(()=>{setUserForm(defaultUserForm);},[users, isVisible]);
 
-    function editUser(event: React.FormEvent) {
-        // handle sending info to flask once the form is submitted
-            axios({
-                method: "patch",
-                baseURL: 'http://127.0.0.1:5000', //can replace with personal port
-                url: `/user/${user.id}`,
-                data: {
-                    fname: userForm.fname,
-                    lname: userForm.lname,
-                    email: userForm.email,
-                    street: userForm.street,
-                    city: userForm.city,
-                    province: userForm.province,
-                    postal_code: userForm.postal_code,
-                }
-            }).then(async () => {
-                setShowForm(false);
-                alert("Account Edited!");
-            }).catch((error) => {
-                if (error.response) {
-                    console.log(error.response);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
-                }
-            })
-            event.preventDefault();
-        // }
+    const closeNoSave = () =>{
+        setShowForm(false);
+        setUserForm(defaultUserForm);
     }
+
+    const methods = useForm();
+
+    const editUser = methods.handleSubmit(() => {
+        // handle sending info to flask once the form is submitted
+        axios({
+            method: "patch",
+            baseURL: 'http://127.0.0.1:5000', //can replace with personal port
+            url: `/user/${user.id}`,
+            data: {
+                fname: userForm.fname,
+                lname: userForm.lname,
+                email: userForm.email,
+                street: userForm.street,
+                city: userForm.city,
+                province: userForm.province,
+                postal_code: userForm.postal_code,
+            }
+        }).then(async () => {
+            alert("Account Edited!");
+            setShowForm(false);
+        }).catch((error) => {
+            if (error.response) {
+                console.log(error.response);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            }
+        })
+    });
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         // handle updating the userForm state whenever a field changes
-        const {value, name} = event.target
+        const {value, name} = event.target;
         setUserForm(prevNote => ({
                 ...prevNote, [name]: value
             })
-        )
+        );
+        methods.trigger(name);
     }
 
     // table data to be manipulated, leaving real values unchanged
@@ -213,8 +229,6 @@ const Users: React.FC = () => {
         { id: 8, header: 'Cart Total', accessor: 'cart_total' }
     ];
 
-
-    const fieldStyle = "text-camel bg-transparent w-full mt-1 py-1 px-2 border border-camel";
     const labelDivStyle = "mb-4 w-full";
     const pStyle = "text-camel bg-transparent w-full mt-1 py-1 px-2 border border-beige border-t-camel";
 
@@ -229,7 +243,7 @@ const Users: React.FC = () => {
 
                         <div className={"grid grid-cols-2 mb-6"}>
                         {showForm?
-                            <Button onClick={()=>{setShowForm(false)}}>Close Edit</Button>
+                            <Button onClick={closeNoSave}>Cancel Edit</Button>
                             :
                             <Button onClick={()=>{setShowForm(true)}}>Edit</Button>
                         }
@@ -237,70 +251,33 @@ const Users: React.FC = () => {
                         </div>
 
                         {showForm ?
-                            <form method={"post"}>
+                            <FormProvider {...methods}>
+                            <form noValidate onSubmit={e => e.preventDefault()}>
                                 <div className="grid items-center min-w-full">
 
                                     {/*Account Section*/}
                                     <p className={"text-3xl mb-6"}>Editing User</p>
                                     <div className={"grid grid-cols-2 gap-4"}>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"fname"} >First Name</label>
-                                            <input
-                                                id={"fname"} name={"fname"} value={userForm.fname} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"lname"}>Last Name</label>
-                                            <input
-                                                id={"lname"} name={"lname"} value={userForm.lname} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"email"}>Email Address</label>
-                                            <input
-                                                id={"email"} name={"email"} value={userForm.email} type={"email"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
+                                        <Input value={userForm.fname} {...fname_validation({handleChange})}/>
+                                        <Input value={userForm.lname} {...lname_validation({handleChange})}/>
+                                        <Input value={userForm.email} {...email_validation({handleChange})}/>
                                     </div>
 
                                     {/*Shipping Address Section*/}
                                     <p className={"text-3xl mb-6 mt-4"}>Shipping Address</p>
                                     <div className={"grid grid-cols-2 gap-4 w-auto"}>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"street"}>Street Address</label>
-                                            <input
-                                                id={"street"} name={"street"} value={userForm.street} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"city"}>City</label>
-                                            <input
-                                                id={"city"} name={"city"} value={userForm.city} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"province"}>Province</label>
-                                            <input
-                                                id={"province"} name={"province"} value={userForm.province} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
-                                        <div className={labelDivStyle}>
-                                            <label htmlFor={"postal_code"}>Postal Code</label>
-                                            <input
-                                                id={"postal_code"} name={"postal_code"} value={userForm.postal_code} type={"text"}
-                                                onChange={handleChange} placeholder={""} autoComplete={"on"}
-                                                className={fieldStyle}/>
-                                        </div>
+                                        <Input value={userForm.street} {...street_validation({handleChange })}/>
+                                        <Input id={"city"} name={"city"} value={userForm.city} type={"text"}
+                                               htmlFor={"city"} label={"City"}
+                                               {...text_only_validation({handleChange })}
+                                        />
+                                        <Input value={userForm.province} {...province_validation({handleChange})}/>
+                                        <Input value={userForm.postal_code} {...postal_code_validation({handleChange})}/>
                                     </div>
                                     <Button onClick={editUser}>Save User Edit</Button>
                                 </div>
                             </form>
+                            </FormProvider>
 
 
                             :
@@ -312,11 +289,11 @@ const Users: React.FC = () => {
                                 <p className={"text-3xl mb-6"}>Viewing User</p>
                                 <div className={"grid grid-cols-2 gap-4"}>
                                     <div className={labelDivStyle}>
-                                        <label htmlFor={"firstname"} >First Name</label>
+                                        <label htmlFor={"fname"} >First Name</label>
                                         <p className={pStyle}>{userForm.fname}</p>
                                     </div>
                                     <div className={labelDivStyle}>
-                                        <label htmlFor={"lastname"}>Last Name</label>
+                                        <label htmlFor={"lname"}>Last Name</label>
                                         <p className={pStyle}>{userForm.lname}</p>
                                     </div>
                                     <div className={labelDivStyle}>
@@ -329,7 +306,7 @@ const Users: React.FC = () => {
                                 <p className={"text-3xl mb-6 mt-4"}>Shipping Address</p>
                                 <div className={"grid grid-cols-2 gap-4 w-auto"}>
                                     <div className={labelDivStyle}>
-                                        <label htmlFor={"streetaddress"}>Street Address</label>
+                                        <label htmlFor={"street"}>Street Address</label>
                                         <p className={pStyle}>{userForm.street}</p>
                                     </div>
                                     <div className={labelDivStyle}>
@@ -341,8 +318,8 @@ const Users: React.FC = () => {
                                         <p className={pStyle}>{userForm.province}</p>
                                     </div>
                                     <div className={labelDivStyle}>
-                                        <label htmlFor={"postal"}>Postal Code</label>
-                                        <p className={pStyle}>{userForm.postal_code}</p>
+                                        <label htmlFor={"postal_code"}>Postal Code</label>
+                                        <p className={pStyle+" uppercase"}>{userForm.postal_code}</p>
                                     </div>
                                 </div>
                             </div>}

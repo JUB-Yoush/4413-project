@@ -1,5 +1,4 @@
 import React from 'react';
-import Googollogo from "../assets/Googollogo.png";
 import Logo from "../components/Logo.tsx";
 import Button from "../components/Button.tsx";
 
@@ -86,13 +85,7 @@ const LogInPage: React.FC = () => {
                 <p>Don't have an account? <a href={"/signup"}
                                              className={"font-normal underline text-camel hover:font-extrabold"}>
                     Sign Up</a></p>
-                <p>Log In With:</p>
-                <div
-                    className={"h-16 w-24 relative bg-white bg-opacity-25 border border-white border-opacity-50 grid items-center justify-center rounded"}>
-                    <a href={"/"}><span className={"w-full absolute top-0 left-0 z-10"}></span>
-                        <img src={Googollogo} className={"h-8 w-8"} alt="Google Logo"/>
-                    </a>
-                </div>
+
             </div>
         </form>
     );

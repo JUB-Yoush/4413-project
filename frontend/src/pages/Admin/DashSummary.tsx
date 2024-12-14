@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
 import {Order, Product, User} from "../../types.ts";
+import Inventory from "./Inventory.tsx";
 
 
 interface GlanceStructure {
@@ -95,8 +96,9 @@ const Dashboard: React.FC = () => {
     return (
         <div className={"flex flex-col w-full"}>
             {/*at a glance stats*/}
+
             {/* Page Links */}
-            <ul className={"flex flex-row gap-8 w-full items-center justify-center border border-camel"}>
+            <ul className={"flex flex-row gap-8 w-full mb-8 items-center justify-center border border-camel"}>
                 {glance.map((link) => (
                     <li
                         key={link.name}
@@ -110,6 +112,7 @@ const Dashboard: React.FC = () => {
                 ))}
             </ul>
             {/*sales charts section*/}
+            <Inventory/>
         </div>
     );
 };

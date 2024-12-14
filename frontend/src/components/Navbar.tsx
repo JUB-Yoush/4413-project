@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import { NavLink } from 'react-router-dom';
 import ProfileDropdown from './ProfileDropdown';
 import CartDropdown from './CartDropdown';
 import Logo from "./Logo.tsx";
@@ -28,6 +28,7 @@ const Navbar: React.FC<Prop> = (prop) => {
     setSearchTerm(value);
     prop.onSearch(value);
   };
+  const liStyle = "flex items-center justify-center w-full h-full py-1";
   return (
     <nav className="bg-cream p-10 pb-7 text-sm">
       <ul className="flex flex-row text-center items-center">
@@ -41,12 +42,14 @@ const Navbar: React.FC<Prop> = (prop) => {
               {navLinks.map((link, index) => (
                 <li
                     key={link.name}
-                    className={`hover:text-white hover:font-medium hover:bg-camel flex-grow border-y border-l border-camel py-[5px] ${
+                    className={`hover:text-white hover:font-medium hover:bg-camel flex-grow border-y border-l border-camel ${
                       index === navLinks.length - 1 ? 'border-r' : ''
                     }`}>
-                      <Link to={link.href} className="flex items-center justify-center w-full h-full">
+                      <NavLink to={link.href} className={({ isActive}) =>
+                                          isActive ? `${liStyle} bg-camel text-white`
+                                              : `${liStyle}`}>
                         {link.name}
-                      </Link>
+                      </NavLink>
                 </li>
               ))}
             </ul>

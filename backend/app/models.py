@@ -104,7 +104,7 @@ class Sale(Document):
     user = ReferenceField(User)
     total_price = FloatField()
     purchases = ListField(EmbeddedDocumentField(CartItem), required=True)
-    approved = BooleanField(required=True)
+    approved = BooleanField(required=False)
 
     def json_formatted(self):
         print(f"serializing {self.__str__}")

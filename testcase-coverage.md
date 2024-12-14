@@ -1,19 +1,36 @@
 # auth
 
-- [ ] /signup
-- [ ] /login
-- [ ] /admin/signup
-- [ ] /admin/login
+- [x] /signup
+- [x] /login
+- [x] /admin/signup
+- [x] /admin/login
 
-# main/cart
+# user
 
-- [ ] get cart
-- [ ] post cart
-- [ ] edit cart quantity
-- [ ] remove product
+- [x] update credit card
+- [x] user query
+- [x] get user
+- [x] edit user (user)
+- [x] edit user (admin)
 
-# main/catalog
+# cart
 
-- [ ] query products
-- [ ] upload product
-- [ ] modify product
+- [x] get cart
+- [x] post cart
+- [x] edit cart quantity
+- [x] remove product
+
+# catalog
+
+- [x] query products
+- [x] modify product
+
+# checkout
+
+- [ ] checkout cart
+
+# sales
+
+- [ ] query history
+- [ ] get sale
+- [ ] post sale

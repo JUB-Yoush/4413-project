@@ -38,7 +38,6 @@ def get_cart():
     return jsonify({"items": cart_items, "cart_total": user.cart_total}), 200
 
 
-# shouldn't require user
 @cart.route("/", methods=["POST"])
 @user_or_admin_required
 def add_to_cart():
@@ -89,7 +88,7 @@ def edit_cart_item_quantity(product_id):
     data = request.json
     token = request.headers.get("Authorization")
     new_quantity = data["quantity"]
-
+    print(f"product_id {product_id}")
     payload = get_user_from_token(token)
 
     if new_quantity < 0:
@@ -101,7 +100,12 @@ def edit_cart_item_quantity(product_id):
         for item in user.cart_items:
             if str(item.product_id.id) == product_id:
                 item.quantity = new_quantity
+                # if new_quantity == 0:
+                # user.cart_items = [
+                # item for item in user.cart_items if str(item.product_id.id) != product_id
+                # ]
                 user.update_cart_total()
+                user.save()
                 return jsonify({"message": "Product quantity updated"}), 200
         return jsonify({"error editing item quantity": "item not in cart"}), 500
     except Exception as e:
@@ -121,6 +125,7 @@ def remove_cart_item(product_id):
             item for item in user.cart_items if str(item.product_id.id) != product_id
         ]
         user.update_cart_total()
+        user.save()
         return jsonify({"message": "Product removed successfully"}), 200
     except Exception as e:
         return jsonify({"error removing item from cart": str(e)}), 500

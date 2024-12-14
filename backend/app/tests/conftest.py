@@ -19,7 +19,7 @@ def test_client():
 @pytest.fixture(scope="module")
 def create_user(test_client):
     user_data = {
-        "fname": "wampington",
+        "fname": "Wampington",
         "lname": "Mcsus",
         "email": "test_user@domain.com",
         "password": "wamp123",
@@ -40,12 +40,12 @@ def create_admin(test_client):
         "email": "test_admin@domain.com",
         "password": "wamp123",
     }
-    response = test_client.post("/admin/signup", json=user_data)
+    response = test_client.post("/admin/signup", json=admin_data)
     assert response.status_code == 201
-    return user_data
+    return admin_data
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def login_user(test_client, create_user):
     login_data = {
         "email": create_user["email"],
@@ -58,7 +58,7 @@ def login_user(test_client, create_user):
     return jwt
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def login_admin(test_client, create_admin):
     login_data = {
         "email": create_admin["email"],
@@ -90,9 +90,22 @@ def post_product(test_client, login_admin):
     return id
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def post_cart(test_client, login_user, post_product):
-    purchase_data = {"product_id": post_product, "quantity": 1}
-    headers = {"Authorization": f"Bearer {login_admin}"}
-    response = test_client.post(json=product_data, headers=headers)
+    print(post_product)
+    purchase_data = {"product_id": str(post_product.id), "quantity": 1}
+    headers = {"Authorization": f"Bearer {login_user}"}
+    response = test_client.post("/cart/", json=purchase_data, headers=headers)
     assert response.status_code == 201
+
+
+"""
+NEED 2 FIX
+def post_sale(test_client, create_user, login_user, post_product, post_cart):
+    headers = {"Authorization": f"Bearer {login_user}"}
+    json_body = {
+        "use_saved_info":True
+    }
+    response = test_client.post("/checkout/", json=json_body, headers=headers)
+    assert response.status_code == 201
+"""

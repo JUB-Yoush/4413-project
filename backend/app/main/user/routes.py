@@ -54,29 +54,29 @@ def get_users():
         order = request.args.get("order", "asc")
 
         print(
-            f"Query params: {fname}\n {lname} \n {email} \n {street} \n {city} "
-            f"\n {province} \n {postal_code} \n {sort_by} \n {order}"
+            f"Query params: \n fname={fname}\n lname={lname} \n email={email} \n street={street} \n city={city} "
+            f"\n prov={province} \n postal={postal_code} \n sort={sort_by} \n order={order}"
         )
 
         # build query
         query = Q()
         if fname:
-            query &= Q(fname__like=fname)
+            query &= Q(fname__icontains=fname)
         if lname:
-            query &= Q(lname__like=lname)
+            query &= Q(lname__icontains=lname)
         if email:
-            query &= Q(email__like=email)
+            query &= Q(email__icontains=email)
         if street:
-            query &= Q(street__like=street)  # OR logic
+            query &= Q(street__icontains=street)  # OR logic
         if city:
-            query &= Q(city__like=city)
+            query &= Q(city__icontains=city)
         if province:
-            query &= Q(province__like=province)
+            query &= Q(province__icontains=province)
         if postal_code:
-            query &= Q(postal_code__like=postal_code)
+            query &= Q(postal_code__icontains=postal_code)
+
 
         users = User.objects(query)
-        print(users)
         # sort results
         sort_order = 1 if order == "asc" else -1
         users = users.order_by(f"{'-' if sort_order == -1 else ''}{sort_by}")
@@ -126,7 +126,7 @@ def edit_user():
 
 @user.route("/<user_id>", methods=["PATCH"])
 @admin_required
-def edit_other_user(user_id):
+def admin_edit_user(user_id):
     data = request.json
     try:
         u = User.objects.get(id=user_id)

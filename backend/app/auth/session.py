@@ -119,6 +119,7 @@ def user_or_admin_required(f):
 
 
 def get_referenced_user(payload):
+    print("getting referenced user")
     email = payload["email"]
 
     # returns either the user in the jwt token or the user referenced in the "user_email" json section if jwt token is an admin.
@@ -128,4 +129,5 @@ def get_referenced_user(payload):
     if admin == None:
         return user
     if user == None:
-        return admin
+        data = request.json
+        return User.objects(email=data.get("email")).first()

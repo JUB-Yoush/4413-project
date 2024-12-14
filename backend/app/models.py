@@ -117,15 +117,3 @@ class Sale(Document):
         ]
         del model_json["_id"]
         return model_json
-
-
-"""
-
-class Purchase(Document):
-    date = DateField(required=True)
-    user = ReferenceField(User, required=True)
-    product = ReferenceField(Product, required=True)
-    price = FloatField(required=True)
-    # {product_id:quantity}
-    quantity = DictField()
-"""

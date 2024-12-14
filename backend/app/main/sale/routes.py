@@ -30,7 +30,7 @@ def get_sales():
         )
         # build query
         query = Q()
-        #query a specific day
+        # query a specific day
         if date:
             date = datetime.strptime(date, "%Y-%m-%d")  # Adjust format as needed
             start_of_day = date
@@ -135,7 +135,7 @@ def make_sale():
         )
         sale.save()
         # clear a user's cart after a order
-
+        # user.cart_items = []
         return jsonify({"message": "sale recorded"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500

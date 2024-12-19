@@ -5,11 +5,11 @@ import Button from "../../components/Button.tsx";
 import {OrderTable} from "../../components/Admin/Table.tsx";
 import {forEach} from "lodash";
 import TableDropDown from "../../components/Admin/TableDropDown.tsx";
-import { useSPAContext } from "../../components/Admin/AdminSPAContext.tsx";
 
 const Orders: React.FC = () => {
 
-    const { currentPage } = useSPAContext(); 
+    const getYorN = (state: boolean) =>{return state ? "Yes" : "No";}
+    const [loading, setLoading] = useState<boolean>(true);
 
     const defaultOrder: Order = {
         "id": "90", "approved": false, "date": "Wed,19 Nov, 2024",
@@ -17,7 +17,8 @@ const Orders: React.FC = () => {
             "quantity": 8, "total_price": 0.00}],
         "user": {"cart_items": [], "cart_total": 0.0, "cc_info": "", "city": "",
             "decryption_key": "", "email": "defaultOrder.co", "fname": "Fname", "id": "",
-            "lname": "", "password": "", "postal_code": "", "province": "", "street": ""}
+            "lname": "", "password": "", "postal_code": "", "province": "", "street": ""},
+        "total_price": 0.00
     }; //default order structure to be used by objects with state
 
     const [showDialog, setShowDialog]
@@ -28,7 +29,7 @@ const Orders: React.FC = () => {
     const [order, setOrder] = useState<Order>(defaultOrder);
 
     const defaultProxy = {
-        "id": "", "approved": "false", "date": "",
+        "id": "", "approved": getYorN(false), "date": "",
         "purchases": "", "user": "", "total_price":"0.00"
     };
 
@@ -97,11 +98,23 @@ const Orders: React.FC = () => {
 
         forEach(orders, (o)=>{
             const currID = o.id;
-            const currApproved = `${o.approved}`;
+            const currApproved = getYorN(o.approved);
             const currDate= o.date.slice(0,16);
-            const currPurchases = `(${o.purchases[0].quantity}) ${o.purchases[0].name}`;
+            /*
+            * make string list of all purchases
+            * */
+            let currPurchases = ``;
+            forEach(o.purchases, (p, index)=>{
+                if (Object.is(o.purchases.length - 1, index)){
+                    currPurchases += `(${p.quantity}) ${p.name}`;
+                }else{
+                    currPurchases += `(${p.quantity}) ${p.name}, `;
+                    currPurchases += "\n";
+                }
+
+            });
             const currUser = o.user.email;
-            const currPrice = `${o.purchases[0].total_price}`;
+            const currPrice = `${o.total_price.toFixed(2)}`;
             temp.push({
                 "id": currID, "approved": currApproved, "date": currDate,
                 "purchases": currPurchases,
@@ -125,6 +138,7 @@ const Orders: React.FC = () => {
     useEffect(()=>{collateProxiesAndOrders()},[orders]);
 
     function getOrders(){
+        setLoading(true);
         axios({
             method: "get",
             baseURL: "http://localhost:5000",
@@ -138,37 +152,12 @@ const Orders: React.FC = () => {
                 console.log(error.response.status);
                 console.log(error.response.headers);
             }
+        }).finally(()=>{
+            setLoading(false);
         })
     }
 
-    const defaultOrderForm = {
-        "id": order.id, "approved": Boolean(order.approved),
-        "date": order.date,
-        "purchases": order.purchases,
-        "user": {
-            "cart_items": order.user.cart_items, "cart_total": order.user.cart_total,
-            "cc_info": order.user.cc_info, "city": order.user.city,
-            "decryption_key": order.user.decryption_key, "email": order.user.email,
-            "fname": order.user.fname, "id": order.user.id, "lname": order.user.lname,
-            "password": order.user.password, "postal_code": order.user.postal_code,
-            "province": order.user.province, "street": order.user.street
-        }
-    };
-
-    const [orderForm, setOrderForm]
-        = useState(defaultOrderForm);
-
-    useEffect(()=>{setOrderForm(defaultOrderForm)},[order]);
-
-    useEffect(() => {
-        if (currentPage === "orders") {
-            getOrders();
-        }
-    }, [currentPage]);
-
-    useEffect(() => {
-        getOrders();
-    }, []);
+    useEffect(() => {getOrders();}, []);
 
     function editOrder(event: React.FormEvent) {
         if (order.id) {
@@ -183,27 +172,26 @@ const Orders: React.FC = () => {
                     o.id === order.id ? { ...o, approved: !o.approved } : o
                 );
                 setOrders(updatedOrders); // Update the orders state
-    
+
                 // Update the current order state
                 setOrder((prev) => ({ ...prev, approved: !prev.approved }));
-    
+
                 // Regenerate order proxies for the table
                 collateProxiesAndOrders();
-    
-                // alert(`Order ${order.approved ? "Declined" : "Approved"}!`);
+
+                alert(`Order ${order.approved ? "Declined" : "Approved"}!`);
             })
             .catch((error) => {
                 console.error("Error:", error.response || error.message);
             });
-    
+
             event.preventDefault();
         }
     }
-    
 
     useEffect(() => {
-        console.log("Updated Approved Status:", typeof orderForm.approved, orderForm.approved);
-    }, [orderForm.approved]);
+        console.log("Updated Approved Status:", typeof orderProxy.approved, orderProxy.approved);
+    }, [orderProxy.approved]);
 
     const ocolumns = [
         { id: 1, header: 'Order ID', accessor: 'id' },
@@ -232,11 +220,22 @@ const Orders: React.FC = () => {
 
         forEach(orders, (o)=>{
             const currID = o.id;
-            const currApproved = `${o.approved}`;
+            const currApproved = getYorN(o.approved);
             const currDate= o.date.slice(0,16);
-            const currPurchases = `(${o.purchases[0].quantity}) ${o.purchases[0].name}`;
+            /*
+            * make string list of all purchases
+            * */
+            let currPurchases = ``;
+            forEach(o.purchases, (p, index)=>{
+                if (Object.is(o.purchases.length - 1, index)){
+                    currPurchases += `(${p.quantity}) ${p.name}`;
+                }else{
+                    currPurchases += `(${p.quantity}) ${p.name}, `;
+                    currPurchases += "\n";
+                }
+            });
             const currUser = o.user.email;
-            const currPrice = `${o.purchases[0].total_price}`;
+            const currPrice = `${o.total_price.toFixed(2)}`;
             const tempProxy: OrderProxy = {
                 "id": currID, "approved": currApproved, "date": currDate,
                 "purchases": currPurchases,
@@ -247,7 +246,6 @@ const Orders: React.FC = () => {
         });
         setOrderProxies(temp);
     }
-
     return (
         <div>
             {/*Dropdown for column filter*/}
@@ -258,7 +256,7 @@ const Orders: React.FC = () => {
                     <dialog open className={"bg-beige border border-camel px-10 py-4 w-9/12 h-5/6 overflow-y-auto"}>
 
                     <div className={"grid grid-cols-2 mb-6"}>
-                    {orderForm.approved ? (
+                    {orderProxy.approved ? (
                         <Button onClick={editOrder} buttonVariant={"sec"}>
                             Decline Order
                         </Button>
@@ -278,20 +276,20 @@ const Orders: React.FC = () => {
                             <div className={"grid grid-cols-2 gap-4"}>
                                 <div className={labelDivStyle}>
                                     <label htmlFor={"date"}>Date</label>
-                                    <p className={pStyle}>{orderForm.date}</p>
+                                    <p className={pStyle}>{orderProxy.date}</p>
                                 </div>
                                 <div className={labelDivStyle}>
                                     <label htmlFor={"email"}>User Email</label>
-                                    <p className={pStyle}>{orderForm.user.email}</p>
+                                    <p className={pStyle}>{orderProxy.user}</p>
                                 </div>
                                 <div className={labelDivStyle}>
                                     <label htmlFor={"purchases"}>Purchases</label>
-                                    <p className={pStyle}>{`(${orderForm.purchases[0].quantity}) ${orderForm.purchases[0].name}`}</p>
+                                    <p className={pStyle+ " whitespace-pre break-words"}>{`${orderProxy.purchases}`}</p>
                                 </div>
                                 <div className={labelDivStyle}>
                                     <label htmlFor={"approved"}>Approval State</label>
                                     <p className={pStyle}>
-                                        {orderForm.approved ? "Approved" : "Not Approved"}
+                                        {orderProxy.approved ? "Approved" : "Not Approved"}
                                     </p>
                                 </div>
                             </div>
@@ -303,6 +301,7 @@ const Orders: React.FC = () => {
             }
             <h1 className="text-2xl font-bold mb-4">Orders</h1>
             <Button onClick={getOrders}>Update table</Button>
+            {loading? <p>Loading</p>: <></>}
             <OrderTable columns={ocolumns} data={orderProxies}
                         setVis={setShowDialog} setOrderProxy={setOrderProxy}
                         setFilter={setFilter} toggleShowDD={toggleShowDD}

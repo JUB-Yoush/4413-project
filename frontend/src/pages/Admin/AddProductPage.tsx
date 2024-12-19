@@ -2,18 +2,23 @@ import React, { useState } from 'react';
 import Button from '../../components/Button.tsx';
 import 'react-medium-image-zoom/dist/styles.css';
 import axios from "axios";
-import { useMetadata } from "../../components/MetadataContext"; 
+import { useMetadata } from "../../components/MetadataContext";
+import {flex_text_only_validation, number_only_validation} from "../../components/InputValidations.tsx";
+import Input from "../../components/Input.tsx";
+import {FormProvider, useForm} from "react-hook-form";
 
 const AddProductPage: React.FC = () => {
 
     const { refreshMetadata } = useMetadata();
-
+    const [error, setError] = useState(false);
     // addProduct form state starts with email and password as empty strings
     const [prodForm, setProdForm]
         = useState({name: "", category: "", brand: "", album: "", price: 0.00,
             description: "", image_url: "", quantity: 0});
+    const methods = useForm();
 
     function addProduct(event: React.FormEvent) {
+        setError(false);
         // handle sending info to flask once the form is submitted
         axios({
             method: "post",
@@ -33,10 +38,11 @@ const AddProductPage: React.FC = () => {
         //     TODO confirmation of product added
         //     perhaps prompt to view on merch page
             alert("Product Added!");
-
+            setError(false);
             refreshMetadata();
             window.location.href = `/admin/inventory`;
         }).catch((error) => {
+            setError(true);
             if (error.response) {
                 console.log(error.response);
                 console.log(error.response.status);
@@ -63,7 +69,8 @@ const AddProductPage: React.FC = () => {
         setProdForm(prevNote => ({
                 ...prevNote, [name]: value
             })
-        )
+        );
+        methods.trigger(name);
     }
     function cancel(event: React.FormEvent){
         window.location.href='/admin/inventory';
@@ -79,147 +86,52 @@ const AddProductPage: React.FC = () => {
         }))
         event.preventDefault();
     }
-    // TODO form validation to prevent empty product submissions
-    // const checkValidation = () => {
-    //     let errors = validation;
-    //
-    //     //first Name validation
-    //     if (!inputValues.fName.trim()) {
-    //         errors.fName = "First name is required";
-    //     } else {
-    //         errors.fName = "";
-    //     }
-    //     //last Name validation
-    //     if (!inputValues.lName.trim()) {
-    //         errors.lName = "Last name is required";
-    //     } else {
-    //         errors.lName = "";
-    //     }
-    //
-    //     // email validation
-    //     const emailCond =
-    //         "/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$/";
-    //     if (!inputValues.email.trim()) {
-    //         errors.email = "Email is required";
-    //     } else if (!inputValues.email.match(emailCond)) {
-    //         errors.email = "Please ingress a valid email address";
-    //     } else {
-    //         errors.email = "";
-    //     }
-    //
-    //     //password validation
-    //     const cond1 = "/^(?=.*[a-z]).{6,20}$/";
-    //     const cond2 = "/^(?=.*[A-Z]).{6,20}$/";
-    //     const cond3 = "/^(?=.*[0-9]).{6,20}$/";
-    //     const password = inputValues.password;
-    //     if (!password) {
-    //         errors.password = "password is required";
-    //     } else if (password.length < 6) {
-    //         errors.password = "Password must be longer than 6 characters";
-    //     } else if (password.length >= 20) {
-    //         errors.password = "Password must shorter than 20 characters";
-    //     } else if (!password.match(cond1)) {
-    //         errors.password = "Password must contain at least one lowercase";
-    //     } else if (!password.match(cond2)) {
-    //         errors.password = "Password must contain at least one capital letter";
-    //     } else if (!password.match(cond3)) {
-    //         errors.password = "Password must contain at least a number";
-    //     } else {
-    //         errors.password = "";
-    //     }
-    //
-    //     //matchPassword validation
-    //     if (!inputValues.confirmPassword) {
-    //         errors.confirmPassword = "Password confirmation is required";
-    //     } else if (inputValues.confirmPassword !== inputValues.Password) {
-    //         errors.confirmPassword = "Password does not match confirmation password";
-    //     } else {
-    //         errors.password = "";
-    //     }
-    //
-    //     setValidation(errors);
-    // };
-    const defaultFieldFormat = "bg-transparent w-full mt-1 py-1 px-2 border border-camel";
 
     return (
         <div className={"min-w-full flex-grow"}>
+            <FormProvider {...methods}>
             <form className="px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
                 <h1 className="text-3xl mb-4">Add a Product to Inventory</h1>
                 <div className="mb-4">
-                    <label
-                        htmlFor={"name"}>Name</label>
-                    <input
-                        id={"name"} name={"name"} value={prodForm.name} type={"text"} onChange={handleChange}
-                        placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}/>
-                </div>
-                <div className="mb-4 w-full">
-                    <label
-                        htmlFor={"category"}>Category</label>
-                    <input
-                        id={"category"} name={"category"} value={prodForm.category} type={"text"}
-                        onChange={handleChange} placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}/>
-                </div>
-                <div className="mb-4 w-full">
-                    <label
-                        htmlFor={"brand"}>Brand</label>
-                    <input
-                        id={"brand"} name={"brand"} value={prodForm.brand} type={"text"}
-                        onChange={handleChange} placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}/>
-                </div>
-
-                <div className="mb-4 w-full">
-                    <label
-                        htmlFor={"album"}>Album</label>
-                    <input
-                        id={"album"} name={"album"} value={prodForm.album} type={"text"}
-                        onChange={handleChange} placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}/>
-                </div>
-                <div className="mb-4 w-full">
-                    <label
-                        htmlFor={"price"}>Price</label>
-                    <input
-                        id={"price"} name={"price"} value={prodForm.price} type={"number"}
-                        onChange={handleChange} placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}/>
-                </div>
-                <div className="mb-4 w-full">
-                    <label
-                        htmlFor={"description"}>Description</label>
-                    <input
-                        id={"description"} name={"description"} value={prodForm.description} type={"text"}
-                        onChange={handleChange} placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}
-                        pattern={"^(?=.*\d)(?=.*[a-zA-Z](?=.*[^a-zA-Z0-9]))"}/>
-                </div>
-                {/*<div className="mb-4 w-full">*/}
-                {/*    <label*/}
-                {/*        htmlFor={"image_url"}>image_url</label>*/}
-                {/*    <input*/}
-                {/*        id={"image_url"} name={"image_url"} value={prodForm.image_url} type={"file"}*/}
-                {/*        onChange={handleChange} placeholder={""} autoComplete={"on"}*/}
-                {/*        className={defaultFieldFormat}/>*/}
-                {/*</div>*/}
-                <div className="mb-4 w-full">
-                    <label
-                        htmlFor={"image_url"}>Image URL</label>
-                    <input
-                        id={"image_url"} name={"image_url"} value={prodForm.image_url} type={"url"}
-                        onChange={handleChange} placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}/>
-                </div>
-                <div className="mb-4 w-full">
-                    <label
-                        htmlFor={"quantity"}>Quantity</label>
-                    <input
-                        id={"quantity"} name={"quantity"} value={prodForm.quantity} type={"number"}
-                        onChange={handleChange} placeholder={""} autoComplete={"on"}
-                        className={defaultFieldFormat}/>
+                    <Input id={"name"} name={"name"} value={prodForm.name} type={"text"}
+                           htmlFor={"name"} label={"Name"}
+                           {...flex_text_only_validation({handleChange })}
+                    />
+                    <Input id={"category"} name={"category"} value={prodForm.category} type={"text"}
+                           htmlFor={"category"} label={"Category"}
+                           {...flex_text_only_validation({handleChange })}
+                    />
+                    <Input id={"brand"} name={"brand"} value={prodForm.brand} type={"text"}
+                           htmlFor={"brand"} label={"Brand"}
+                           {...flex_text_only_validation({handleChange })}
+                    />
+                    <Input id={"album"} name={"album"} value={prodForm.album} type={"text"}
+                           htmlFor={"album"} label={"Album"}
+                           {...flex_text_only_validation({handleChange })}
+                    />
+                    <Input id={"price"} name={"price"} value={prodForm.price} type={"number"}
+                           htmlFor={"price"} label={"Price"}
+                           {...number_only_validation({handleChange })}
+                    />
+                    <Input id={"description"} name={"description"} value={prodForm.description} type={"text"}
+                           htmlFor={"description"} label={"Description"}
+                           {...flex_text_only_validation({handleChange })}
+                    />
+                    <Input id={"image_url"} name={"image_url"} value={prodForm.image_url} type={"url"}
+                           htmlFor={"image_url"} label={"Image URL"}
+                           {...flex_text_only_validation({handleChange })}
+                    />
+                    <Input id={"quantity"} name={"quantity"} value={prodForm.quantity} type={"number"}
+                           htmlFor={"quantity"} label={"Quantity"}
+                           {...number_only_validation({handleChange })}
+                    />
                 </div>
 
+                {error?
+                    <div className="flex items-center gap-1 px-2 font-semibold text-pink text-sm bg-red-100">
+                        <p className="text-sm text-pink text-balance">Error. Please confirm inputs.</p>
+                    </div>
+                    : <></>}
                 <div className="mb-4 w-full grid justify-center items-center">
                     <Button type={"submit"} onClick={addProduct}>
                         Add Product</Button>
@@ -230,6 +142,7 @@ const AddProductPage: React.FC = () => {
                 </div>
 
             </form>
+            </FormProvider>
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Navbar from './components/Navbar.tsx';
 import TestPage from './pages/TestPage';
@@ -45,7 +45,7 @@ const App: React.FC = () => {
 
                 {/* Main section */}
                 <div className="w-9/12 flex flex-col pb-16 pr-4 gap-4 min-h-screen flex-grow">
-                    <div className={"min-w-full text-left pl-2"}><Logo size={20}></Logo></div>
+                    <div className={"min-w-full text-left"}><Logo size={20}></Logo></div>
                     <Outlet />
                 </div>
             </div>

@@ -182,6 +182,40 @@ export const text_only_validation = (prop: HandleChangeStructure)=> {
         }
     );
 }
+export const flex_text_only_validation = (prop: HandleChangeStructure)=> {
+    return(
+        {
+            validation: {
+                onChange: prop.handleChange,
+                maxLength: {
+                    value: 30,
+                    message: 'Max 26 characters',
+                },
+                pattern: {
+                    value: /^[A-Za-z0-9]+(\s[A-Za-z0-9]*)*$/,
+                    message: 'Field should contain only letters, numbers and single spaces'
+                }
+            }
+        }
+    );
+}
+export const number_only_validation = (prop: HandleChangeStructure)=> {
+    return(
+        {
+            validation: {
+                onChange: prop.handleChange,
+                min: {
+                    value: 0,
+                    message: 'Min is 0',
+                },
+                max: {
+                    value: 9999.99,
+                    message: 'Max is 9999.99',
+                }
+            }
+        }
+    );
+}
 export const street_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) => {
     return(
         {

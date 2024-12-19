@@ -30,7 +30,7 @@ const Users: React.FC = () => {
         "cart_items": [],
         "cart_total": 0.0,
     }
-
+    const [loading, setLoading] = useState<boolean>(true);
     const [isVisible, setIsVisible]
         = useState(false);
     const [showForm, setShowForm] = useState(false);
@@ -40,6 +40,7 @@ const Users: React.FC = () => {
     const [user, setUser] = useState<User>(defaultUser);
 
     function getUsers(){
+        setLoading(true);
         axios({
             method: "get",
             baseURL: "http://localhost:5000",
@@ -53,6 +54,8 @@ const Users: React.FC = () => {
                 console.log(error.response.status);
                 console.log(error.response.headers);
             }
+        }).finally(()=>{
+            setLoading(false);
         })
     }
     useEffect(()=>{getUsers()},[]);
@@ -146,6 +149,7 @@ const Users: React.FC = () => {
         // will create user Proxies from each user in users
         const temp: User[] = [];
         // store the user details for filtering
+
         // const tempuserIDs : string[] = [];
         const tempuserFnames : string[] = [];
         const tempuserLnames : string[] = [];
@@ -330,6 +334,7 @@ const Users: React.FC = () => {
             }
             <h1 className="text-2xl font-bold mb-4">Users</h1>
             <Button onClick={getUsers}>Update table</Button>
+            {loading? <p>Loading</p>: <></>}
             <UserTable columns={ucolumns} data={userProxies} setVis={setIsVisible} setUser={setUser}
                        setFilter={setFilter} toggleShowDD={toggleShowDD}/>
         </div>

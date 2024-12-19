@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Order, Product, User } from "../../types.ts";
+import Inventory from "./Inventory.tsx";
 
 const Dashboard: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     function getGlance() {
+        setLoading(true);
         Promise.allSettled([
             axios.get("http://localhost:5000/sale/history"),
             axios.get("http://localhost:5000/user/users"),
@@ -23,7 +26,8 @@ const Dashboard: React.FC = () => {
                 setUsers(users);
                 setProducts(products);
             })
-            .catch(console.error);
+            .catch(console.error)
+            .finally(()=> {setLoading(false)});
     }
 
     useEffect(() => {
@@ -38,6 +42,8 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="flex flex-col w-full">
+            <h1 className="text-2xl font-bold mb-4">Quick Summary</h1>
+            {loading? <p>Loading</p>: <></>}
             <ul className="flex flex-row gap-8 w-full items-center justify-center border border-camel">
                 {glance.map((link) => (
                     <li key={link.name} className="text-center">
@@ -48,6 +54,7 @@ const Dashboard: React.FC = () => {
                     </li>
                 ))}
             </ul>
+            <Inventory/>
         </div>
     );
 };

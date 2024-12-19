@@ -20,7 +20,8 @@ interface TableBodyProps{
 const TableBody: React.FC<TableBodyProps> = ({columns,data, setVis,
                                                  setUser, setOrderProxy,
                                                  classname}) =>{
-    const defaultStyle = "py-2 px-4 border-b border-camel text-gray-800 hover:text-white";
+    const defaultStyle = `py-2 px-4 border-b border-camel text-gray-800 hover:text-white
+      whitespace-pre break-words`;
     const isUser = (x: any): x is User => data.includes(x);
     const isOrder = (x: any): x is OrderProxy => data.includes(x);
 
@@ -31,8 +32,8 @@ const TableBody: React.FC<TableBodyProps> = ({columns,data, setVis,
                 className="even:bg-cream cursor-pointer hover:bg-camel"
                 onClick={()=>{
                     if (isUser(row) && setUser) setUser(row);
-                    if (isOrder(row) && setOrderProxy) setOrderProxy(row);
-
+                    else if (isOrder(row) && setOrderProxy) setOrderProxy(row);
+                    window.scrollTo(0,0);
                     setVis(true);
                     }
                 }

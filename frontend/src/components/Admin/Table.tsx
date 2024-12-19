@@ -3,56 +3,10 @@ import {OrderProxy, User} from "../../types.ts";
 import TableHeader from "./TableHeader.tsx";
 import TableBody from "./TableBody.tsx";
 
-interface DataStructure{
-    name: string,
-    age: number,
-    email: string
-}
-interface ColumnStructure{
-    header: string,
-    accessor: string
-}
-interface TableContent{
-    columns: ColumnStructure[],
-    data: DataStructure[]
-}
 
 const defaultTableContainerStyle = "max-w-11/12 h-5/6 overflow-auto"; //w-9/12
 const defaultTableStyle = "bg-beige border border-camel text-sm";
-const Table: React.FC<TableContent> = ({ columns, data }) => {
-    return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full bg-transparent border border-camel">
-                <thead className="bg-gray-200">
-                <tr>
-                    {columns.map((column:ColumnStructure) => (
-                        <th
-                            key={column.accessor}
-                            className="py-2 px-4 bg-tea border-b border-camel text-left"
-                        >
-                            {column.header}
-                        </th>
-                    ))}
-                </tr>
-                </thead>
-                <tbody>
-                {data.map((row, rowIndex) => (
-                    <tr key={rowIndex} className="even:bg-cream">
-                        {columns.map((column:ColumnStructure) => (
-                            <td
-                                key={column.accessor}
-                                className="py-2 px-4 border-b border-camel text-gray-800"
-                            >
-                                {row[column.accessor]}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        </div>
-    );
-};
+
 
 interface UserCol{
     header: string,
@@ -104,56 +58,3 @@ export const OrderTable: React.FC<OrderTableContent> = ({ columns, data,
         </div>
     );
 };
-
-interface SalesRow{
-    fname: string,
-    lname: string,
-    email: string,
-    address: number
-}
-interface SalesCol{
-    header: string,
-    accessor: string
-}
-interface SalesTableContent{
-    columns: SalesCol[],
-    data: SalesRow[]
-}
-export const SalesTable: React.FC<SalesTableContent> = ({ columns, data }) => {
-    return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full bg-transparent border border-camel">
-                <thead className="bg-gray-200">
-                <tr>
-                    {columns.map((column:ColumnStructure) => (
-                        <th
-                            key={column.accessor}
-                            className="py-2 px-4 bg-tea border-b border-camel text-left"
-                        >
-                            {column.header}
-                        </th>
-                    ))}
-                </tr>
-                </thead>
-                <tbody>
-                {data.map((row, rowIndex) => (
-                    <tr key={rowIndex} className="even:bg-cream">
-                        {columns.map((column:ColumnStructure) => (
-                            <td
-                                key={column.accessor}
-                                className="py-2 px-4 border-b border-camel text-gray-800"
-                            >
-                                {row[column.accessor]}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        </div>
-    );
-};
-
-
-
-export default Table;

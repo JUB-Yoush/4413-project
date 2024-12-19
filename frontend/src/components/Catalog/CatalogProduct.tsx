@@ -43,7 +43,7 @@ interface CatalogProductProps {
             <Button 
                 onClick={detailClick}
                 className ="w-full mt-3"
-            >{btnLabel || "Add to Cart"}</Button>
+            >{btnLabel || "View Product"}</Button>
         </div>
     );
 };

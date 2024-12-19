@@ -13,13 +13,12 @@ const TableDropDown: React.FC<TableDDProps> =({showDD,options, handleOptionSelec
     return(
         <div
             className={
-                // This could be a string representing classes passed into the component
                 `flex flex-col
                     absolute top-[180px] left-[200px] text-coffee px-3 py-1 transition-opacity duration-500 
                     ${showDD ? 'opacity-100' : 'opacity-0 pointer-events-none'}`
             }>
             <span className="whitespace-nowrap bg-beige">Filter by:</span>
-            <div className="text-sm absolute top-full right-0 overflow-y-auto max-h-[200px] mt-2 bg-cream text-black border border-camel shadow-md z-50">
+            <div className="text-sm absolute top-full right-0 overflow-y-auto max-h-[200px] max-w-[250px] mt-2 bg-cream text-black border border-camel shadow-md z-50">
                 <ul className="flex flex-col whitespace-nowrap">
                     {options.map((option, index) => (
                         <li

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import Googollogo from "../assets/Googollogo.png";
 import Logo from "../components/Logo.tsx";
 import Button from "../components/Button.tsx";
 import axios from "axios";
@@ -78,9 +77,10 @@ const SignUpPage: React.FC = () => {
     }
 
     return (
+        <div className={"min-w-full flex justify-center"}>
         <FormProvider {...methods}>
         <form noValidate onSubmit={e => e.preventDefault()}
-            className="rounded px-8 pt-6 pb-8 mb-4 w-auto h-auto grid items-center justify-center">
+            className="rounded px-8 pt-6 pb-8 mb-4 max-w-[430px] h-auto grid items-center justify-center">
             <div className="flex mb-4 justify-center"><Logo size={48} ></Logo></div>
             <Input value={signUpForm.fname} {...fname_validation({handleChange})}/>
             <Input value={signUpForm.lname} {...lname_validation({handleChange})}/>
@@ -94,15 +94,10 @@ const SignUpPage: React.FC = () => {
             <div className="grid grid-cols-1 gap-4 place-items-center">
                 <p>Already have an account? <a href={"/login"} className={"font-normal underline text-camel hover:font-extrabold"}>
                     Log In</a></p>
-                <p>Sign Up With:</p>
-                <div className={"h-16 w-24 relative bg-white bg-opacity-25 border border-white border-opacity-50 grid items-center justify-center rounded"}>
-                    <a href={"/"}><span className={"w-full absolute top-0 left-0 z-10"}></span>
-                        <img src={Googollogo} className={"h-8 w-8"} alt="Google Logo"/>
-                    </a>
-                </div>
             </div>
         </form>
         </FormProvider>
+        </div>
     );
 };
 

@@ -222,7 +222,10 @@ export const postal_code_validation = (prop: HandleChangeStructure)=> {
                     value: 6,
                     message: 'Max 6 characters',
                 },
-                pattern: /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i
+                pattern: {
+                    value: /^[ABCEGHJ-NPRSTVXY][0-9][ABCEGHJ-NPRSTV-Z][0-9][ABCEGHJ-NPRSTV-Z][0-9]$/,
+                    message: 'Invalid format. Should be A1A1A1.'
+                }
             }
         }
     );

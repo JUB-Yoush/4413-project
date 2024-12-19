@@ -1,7 +1,6 @@
 import React, { memo } from "react";
-import {Link} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {useTokenContext} from "../TokenContext.tsx";
-import {useSPAContext} from "./AdminSPAContext.tsx";
 
 interface NavLink {
     name: string;
@@ -17,10 +16,11 @@ const sidebarItems: NavLink[] = [
 
 const AdminSidebar: React.FC = memo(() => {
     const {removeToken} = useTokenContext();
-    const {setCurrentPage} = useSPAContext();
     function logOut() {
         removeToken();
     }
+    const liStyle = "flex w-full pl-1";
+
     return (
         <aside className="w-[200px] h-auto pl-8 pr-8" aria-label="Sidebar">
             <button className={"mb-4"}>
@@ -32,16 +32,18 @@ const AdminSidebar: React.FC = memo(() => {
                     <line y1="10.5" x2="24" y2="10.5"/>
                 </svg>
             </button>
-            <p className={"mb-2 text-camel"}>Main Menu</p>
+            <p className={"mb-2 text-camel"}>Admin Menu</p>
             {/* Page Links */}
             <ul>
                 {sidebarItems.map((link) => (
                     <li
                         key={link.name}
                         className={`pl-1 mb-2 hover:text-white hover:font-medium hover:bg-camel hover:border border-camel`}>
-                        <Link to={link.href} className="" onClick={()=>{setCurrentPage(link.name.toLowerCase())}}>
-                            {link.name}
-                        </Link>
+                        <NavLink to={link.href} className={({ isActive}) =>
+                                                    isActive ? `${liStyle} bg-camel text-white`
+                                                        : `${liStyle}`}>
+                                                    {link.name}
+                        </NavLink>
                     </li>
                 ))}
             </ul>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useCartContext } from '../cart/CartContext';
-import QuantityControl from '../components/QuantityControl.tsx';
+import { useCartContext } from '../../cart/CartContext.tsx';
+import QuantityControl from './QuantityControl.tsx';
 import { Link } from 'react-router-dom';
-import Button from '../components/Button.tsx';
-import { CartItem } from "../types.ts";
+import Button from '../Button.tsx';
+import { CartItem } from "../../types.ts";
 
 interface CartDropdownItemProps {
     item: CartItem; 
@@ -94,11 +94,18 @@ const CartDropdownItem: React.FC<CartDropdownItemProps> = ({ item, closeDropdown
                     <span className="font-bold">{item.name}</span>
                 </Link>
                 <div className="ml-3 flex flex-col text-sm">
-                    <QuantityControl
+
+                     <QuantityControl
                         quantity={item.quantity}
-                        setQuantity={(newQuantity) =>
-                            handleQuantityChange(item.product_id, newQuantity)
-                        }
+                        setQuantity={(newQuantity) => {
+                            // Ensure the quantity does not exceed the available stock
+                            if (newQuantity <= product.quantity) {
+                                handleQuantityChange(item.product_id, newQuantity);
+                            } else {
+                                handleQuantityChange(item.product_id, product.quantity); // Limit to max stock
+                            }
+                        }}
+                        disabled={item.quantity >= product.quantity} 
                     />
 
                         <div className="mr-6 flex items-center justify-between flex-row">

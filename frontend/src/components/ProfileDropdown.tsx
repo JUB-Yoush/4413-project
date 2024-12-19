@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import person from '../assets/person.svg';
 import { useTokenContext } from './TokenContext.tsx'; // Adjust the path as needed
@@ -6,17 +6,41 @@ import { useTokenContext } from './TokenContext.tsx'; // Adjust the path as need
 const ProfileDropdown: React.FC = () => {
     const {token, removeToken} =useTokenContext();
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-    const checkLoggedIn = !(!token && token !== "");
+    const checkLoggedIn = Boolean(token);
 
     const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
     const closeDropdown = () => setDropdownOpen(false); // Function to close dropdown
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     function logOut() {
         removeToken(); //also redirects them to merch page
     }
 
+        // Add event listener to detect outside clicks
+        useEffect(() => {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (
+                    dropdownRef.current && 
+                    !dropdownRef.current.contains(event.target as Node) // Click is outside the dropdown
+                ) {
+                    closeDropdown();
+                }
+            };
+    
+            if (isDropdownOpen) {
+                document.addEventListener('mousedown', handleClickOutside);
+            } else {
+                document.removeEventListener('mousedown', handleClickOutside);
+            }
+    
+            // Cleanup on unmount
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }, [isDropdownOpen]);
+
     return (
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
             {/* Profile Icon */}
             <img
                 src={person}

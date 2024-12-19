@@ -1,12 +1,4 @@
-import pytest
-import mongomock
-from mongomock import MongoClient
-from flask import json
-from mongoengine import connect, disconnect
-from mongoengine import Document, StringField
-from app import create_app
 from ..models import *
-from ..auth.session import get_user_from_token
 
 
 # USER
@@ -21,9 +13,9 @@ def test_get_user(test_client, create_user, login_user):
 def test_patch_user(test_client, login_user, create_user, create_admin, login_admin):
     # user modification
     headers = {"Authorization": f"Bearer {login_user}"}
-    changed_json = {"fname": "Wampette"}
+    changed_json = {"email": "test_user@domain.com", "fname": "Wampette"}
     response = test_client.patch("/user/", json=changed_json, headers=headers)
-    assert response.status_code == 201
+    assert response.status_code == 200
     user = User.objects(email=create_user["email"]).first()
 
     assert user.fname == changed_json["fname"]
@@ -39,7 +31,7 @@ def test_patch_user_admin(
         "fname": "Wampington",
     }
     response = test_client.patch("/user/", json=changed_json, headers=headers)
-    assert response.status_code == 201
+    assert response.status_code == 200
     user = User.objects(email=create_user["email"]).first()
 
     assert user.fname == changed_json["fname"]
@@ -47,11 +39,11 @@ def test_patch_user_admin(
 
 def test_patch_card(test_client, login_user, create_user):
     headers = {"Authorization": f"Bearer {login_user}"}
-    patch_json = {"card": "4321432143214321-4343-432"}
+    patch_json = {"cc_info": "4321432143214321-4343-432"}
     response = test_client.patch("/user/cc", json=patch_json, headers=headers)
     assert response.status_code == 201
     user = User.objects(email=create_user["email"]).first()
-    assert patch_json["card"] == user.get_credit_card_string()
+    assert patch_json["cc_info"] == user.get_credit_card_string()
 
 
 def test_query_user(test_client, create_user, create_admin, login_admin):
@@ -126,7 +118,34 @@ def test_patch_products(
 
 
 def test_checkout(test_client, create_user, login_user, post_product, post_cart):
+    # post cart doesn't carry to this test? so I just had to copy it myself
+    purchase_data = {"product_id": str(post_product.id), "quantity": 1}
+    headers = {"Authorization": f"Bearer {login_user}"}
+    response = test_client.post("/cart/", json=purchase_data, headers=headers)
+    assert response.status_code == 201
+
+    user = User.objects(email=create_user["email"]).first()
+
+    assert len(user.cart_items) > 0
     headers = {"Authorization": f"Bearer {login_user}"}
     json_body = {"use_saved_info": True}
     response = test_client.post("/checkout/", json=json_body, headers=headers)
     assert response.status_code == 201
+
+
+def test_query_sales(
+    test_client,
+    create_admin,
+    login_admin,
+    create_user,
+    login_user,
+    post_product,
+    post_cart,
+):
+    headers = {"Authorization": f"Bearer {login_admin}"}
+    response = test_client.get(
+        "/sale/history?name=DJ%20SUS's%20Angels%20Tee", headers=headers
+    )
+    assert response.status_code == 201
+    sale = response.json["sales"][0]["purchases"]
+    assert sale[0]["name"] == "DJ SUS's Angels Tee"

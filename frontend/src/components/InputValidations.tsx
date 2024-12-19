@@ -3,7 +3,7 @@ import React from "react";
 interface HandleChangeStructure{
     handleChange?(event: React.ChangeEvent<HTMLInputElement>): void
 }
-export const new_pw_validation = (prop: HandleChangeStructure)=> {
+export const new_pw_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) => {
     return(
         {
             id: 'password',
@@ -12,7 +12,7 @@ export const new_pw_validation = (prop: HandleChangeStructure)=> {
             htmlFor: "password",
             label: 'Password',
             validation: {
-                onChange: prop.handleChange,
+                onChange: prop?.handleChange,
                 required: {
                     value: true,
                     message: 'Required',
@@ -64,7 +64,7 @@ export const pw_validation = (prop: HandleChangeStructure)=> {
         }
     );
 }
-export const fname_validation = (prop: HandleChangeStructure)=> {
+export const fname_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) =>  {
     return(
         {
             id: 'fname',
@@ -73,7 +73,7 @@ export const fname_validation = (prop: HandleChangeStructure)=> {
             htmlFor: "fname",
             label: 'First Name',
             validation: {
-                onChange: prop.handleChange,
+                onChange: prop?.handleChange,
                 required: {
                     value: true,
                     message: 'Required',
@@ -90,7 +90,7 @@ export const fname_validation = (prop: HandleChangeStructure)=> {
         }
     );
 }
-export const lname_validation = (prop: HandleChangeStructure)=> {
+export const lname_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) => {
     return(
         {
             id: 'lname',
@@ -99,7 +99,7 @@ export const lname_validation = (prop: HandleChangeStructure)=> {
             label: 'Last Name',
             htmlFor: 'lname',
             validation: {
-                onChange: prop.handleChange,
+                onChange: prop?.handleChange,
                 required: {
                     value: true,
                     message: 'Required',
@@ -116,7 +116,7 @@ export const lname_validation = (prop: HandleChangeStructure)=> {
         }
     );
 }
-export const email_validation = (prop: HandleChangeStructure)=> {
+export const email_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) => {
     return(
         {
             id: 'email',
@@ -125,7 +125,7 @@ export const email_validation = (prop: HandleChangeStructure)=> {
             label: 'Email Address',
             htmlFor: 'email',
             validation: {
-                onChange: prop.handleChange,
+                onChange: prop?.handleChange,
                 required: {
                     value: true,
                     message: 'Required',
@@ -143,7 +143,7 @@ export const email_validation = (prop: HandleChangeStructure)=> {
     );
 }
 
-export const province_validation = (prop: HandleChangeStructure)=> {
+export const province_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) => {
     return(
         {
             id: 'province',
@@ -152,7 +152,7 @@ export const province_validation = (prop: HandleChangeStructure)=> {
             htmlFor: "province",
             label: 'Province',
             validation: {
-                onChange: prop.handleChange,
+                onChange: prop?.handleChange,
                 maxLength: {
                     value: 10,
                     message: 'Max 10 characters',
@@ -182,7 +182,7 @@ export const text_only_validation = (prop: HandleChangeStructure)=> {
         }
     );
 }
-export const street_validation = (prop: HandleChangeStructure)=> {
+export const street_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) => {
     return(
         {
             id: 'street',
@@ -191,7 +191,7 @@ export const street_validation = (prop: HandleChangeStructure)=> {
             htmlFor: "street",
             label: 'Street Address',
             validation: {
-                onChange: prop.handleChange,
+                onChange: prop?.handleChange,
                 maxLength: {
                     value: 26,
                     message: 'Max 26 characters',
@@ -204,7 +204,7 @@ export const street_validation = (prop: HandleChangeStructure)=> {
         }
     );
 }
-export const postal_code_validation = (prop: HandleChangeStructure)=> {
+export const postal_code_validation = (prop?: { handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }) => {
     return(
         {
             id: 'postal_code',
@@ -213,7 +213,7 @@ export const postal_code_validation = (prop: HandleChangeStructure)=> {
             htmlFor: "postal_code",
             label: 'Postal Code',
             validation: {
-                onChange: prop.handleChange,
+                onChange: prop?.handleChange,
                 minLength: {
                     value: 6,
                     message: 'Min 6 characters',

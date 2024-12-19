@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 // Define the type of the context
 interface ContextType {
@@ -11,21 +11,21 @@ const SPAContext = createContext<ContextType | undefined>(undefined);
 
 // Create the provider component
 export const CurrentPageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [currentPage, setCurrentPageState]
-        = useState<string>("summary");
+    const [currentPage, setCurrentPageState] = useState<string>("dashboard");
 
+    const validPages = new Set(["dashboard", "inventory", "orders", "users", "sales"]);
 
     const setCurrentPage = (newCurrentPage: string) => {
-        if(newCurrentPage === "dashboard" || newCurrentPage === "inventory" || newCurrentPage === "orders"
-            || newCurrentPage === "users" || newCurrentPage === "sales"){
+        if (currentPage === newCurrentPage) return; // Avoid unnecessary updates
+        if (validPages.has(newCurrentPage)) {
             setCurrentPageState(newCurrentPage);
-        }else{
+        } else {
             console.log("Incorrect page selection type");
         }
     };
 
     return (
-        <SPAContext.Provider value={{ currentPage, setCurrentPage}}>
+        <SPAContext.Provider value={{ currentPage, setCurrentPage }}>
             {children}
         </SPAContext.Provider>
     );
@@ -35,7 +35,9 @@ export const CurrentPageProvider: React.FC<{ children: ReactNode }> = ({ childre
 export const useSPAContext = (): ContextType => {
     const context = useContext(SPAContext);
     if (!context) {
-        throw new Error('useSPAContext must be used within a CurrentPageProvider');
+        throw new Error(
+            "useSPAContext must be used within a CurrentPageProvider. Ensure your component is wrapped with <CurrentPageProvider>."
+        );
     }
     return context;
 };

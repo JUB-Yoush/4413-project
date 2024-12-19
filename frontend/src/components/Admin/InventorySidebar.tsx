@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import MinimumDistanceSlider from "../MinimumDistanceSlider";
+import MinimumDistanceSlider from "../Sidebars/MinimumDistanceSlider";
+import { useMetadata } from "../MetadataContext";
 
 interface SidebarProps {
   selectedCategory: string;
@@ -21,8 +22,14 @@ const Sidebar: React.FC<SidebarProps> = memo(
     onAlbumChange,
     onPriceChange,
   }) => {
-  const categories = ["All Products", "Apparel", "Music", "Accessories", "Pre-orders", "Concert"];
-  const albums = ["Stares from Above", "Heavens", "Angels", "Cloud Flare"];
+    const { metadata } = useMetadata(); // Fetch metadata from the React Context
+
+    if (!metadata) {
+      return <div className="pl-[50px] text-sm"></div>;
+    }
+
+    const { categories, albums } = metadata;
+    const allCategories = ["All Products", ...categories];
 
   return (
     <div className="mb-2 pr-6 font-bold text-coffee">
@@ -31,14 +38,16 @@ const Sidebar: React.FC<SidebarProps> = memo(
       {/* Categories Section */}
       <div className="pt-3 text-sm">
         <h3 className="font-thin pb-2">Categories</h3>
-        {categories.map((category) => (
-          <div
-            key={category}
-            onClick={() => onCategoryChange(category)}
-            className={`block pb-1 font-normal hover:text-tea cursor-pointer ${
-              category === selectedCategory ? "font-semibold text-black" : "font-normal text-black"
-            }`}
-          >
+        {allCategories.map((category) => (
+            <div
+              key={category}
+              onClick={() => onCategoryChange(category === "All Products" ? "" : category)} 
+              className={`block pb-1 pl-1 font-normal hover:text-tea cursor-pointer ${
+                category === selectedCategory || (category === "All Products" && selectedCategory === "")
+                  ? "font-semibold text-black"
+                  : "font-normal text-black"
+              }`}
+            >
             {category}
           </div>
         ))}

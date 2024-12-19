@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import CatalogProduct from "../components/CatalogProduct";
-import { Product } from '../types'; 
+import CatalogProduct from "./CatalogProduct";
+import { Product } from '../../types'; 
 import axios from "axios";
 
 interface SuggestProps {
@@ -44,7 +44,7 @@ const Suggest: React.FC<SuggestProps> = ({ currentCategory, currentProduct, colu
 
     return (
         <div>
-            <p className="pl-20 text-camel text-xl pb-2">You may also like </p>
+            <p className="pl-20 text-camel text-xl pb-2">{currentCategory} you may also like </p>
             <div
                 className="grid gap-3 pl-20 h-[calc(100vh-250px)] overflow-y-auto scrollbar-hidden"
                 style={{

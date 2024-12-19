@@ -1,9 +1,4 @@
 import pytest
-import mongomock
-from mongomock import MongoClient
-from flask import json
-from mongoengine import connect, disconnect
-from mongoengine import Document, StringField
 from app import create_app
 from ..models import *
 
@@ -91,8 +86,7 @@ def post_product(test_client, login_admin):
 
 
 @pytest.fixture(scope="module")
-def post_cart(test_client, login_user, post_product):
-    print(post_product)
+def post_cart(test_client, create_user, login_user, post_product):
     purchase_data = {"product_id": str(post_product.id), "quantity": 1}
     headers = {"Authorization": f"Bearer {login_user}"}
     response = test_client.post("/cart/", json=purchase_data, headers=headers)

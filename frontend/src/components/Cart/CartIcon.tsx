@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCartContext } from '../cart/CartContext'; // Adjust the import path
+import { useCartContext } from '../../cart/CartContext'; // Adjust the import path
 
 interface CartIconProps {
     onClick: () => void;

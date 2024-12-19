@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useParams, Link } from 'react-router-dom';
 import { Product } from '../types';
 import Button from '../components/Button.tsx';
-import Suggest from '../components/Suggest.tsx';
-import QuantityControl from '../components/QuantityControl.tsx';
+import Suggest from '../components/Catalog/Suggest.tsx';
+import QuantityControl from '../components/Cart/QuantityControl.tsx';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import { useCartContext } from '../cart/CartContext';
@@ -14,7 +14,10 @@ const DetailPage: React.FC = () => {
     const [product, setProduct] = useState<Product | null>(location.state as Product);
     const [selectedQuantity, setSelectedQuantity] = useState<number>(1); // Default to 1
     const [popupVisible, setPopupVisible] = useState(false); // Controls visibility
-    const { handleAddToCart } = useCartContext();
+    const { handleAddToCart, refreshCart, cartItems } = useCartContext();
+    const cartItem = product
+        ? cartItems.find((item) => item.product_id === product.id) || { quantity: 0 }
+        : { quantity: 0 };
 
     useEffect(() => {
         // Reset product and fetch new data when route changes
@@ -37,17 +40,31 @@ const DetailPage: React.FC = () => {
         fetchProduct();
     }, [name, location.state]);
 
+
     if (!product) return <div>Loading...</div>;
 
     const handleAddToCartWrapper = async () => {
+        if (!product) {
+            console.error("Product is not loaded yet.");
+            return;
+        }
+
         try {
             await handleAddToCart(product, selectedQuantity); // Add product to cart
+            await refreshCart(); // Explicitly refresh the cart
+            setSelectedQuantity(1);
             setPopupVisible(true); // Show the popup
             setTimeout(() => setPopupVisible(false), 800); // Start fade out
         } catch (error) {
             console.error("Failed to add to cart:", error);
         }
     };
+
+    useEffect(() => {
+        if (product.quantity === 0) {
+            setSelectedQuantity(1); // Keep it as 1 but disable the controls
+        }
+    }, [product.quantity]);
 
     return (
         <>
@@ -96,24 +113,50 @@ const DetailPage: React.FC = () => {
                             <h1 className="text-xl">{product.name}</h1>
                             <p className="pt-4">$ {product.price.toFixed(2)}</p>
                             <p className="pt-4 text-sm">{product.description}</p>
-                            <p className="pt-3 pb-5">In stock: {product.quantity}</p>
+                            <p className="pt-3 pb-5"> In stock: {product.quantity - (cartItem?.quantity || 0)}</p>
                             <QuantityControl
                                 quantity={selectedQuantity}
-                                setQuantity={setSelectedQuantity}
+                                setQuantity={(newQuantity) => {
+                                    const availableStock = product.quantity - (cartItem?.quantity || 0);
+
+                                    if (availableStock > 0) {
+                                        // Allow changes if stock is available
+                                        if (newQuantity <= availableStock) {
+                                            setSelectedQuantity(newQuantity);
+                                        } else {
+                                            setSelectedQuantity(availableStock); // Limit to max stock
+                                        }
+                                    }
+                                }}
+                                disabled={selectedQuantity >= product.quantity - (cartItem?.quantity || 0)}  // Disable if stock is 0
                             />
+
                             <div className="relative">
-                                <Button onClick={handleAddToCartWrapper}>Add to Cart</Button>
-                                {/* Popup Notification with Fade-Out */}
+                                <Button
+                                    onClick={() => {
+                                        if (product.quantity - (cartItem?.quantity || 0) > 0) {
+                                            handleAddToCartWrapper();
+                                        }
+                                    }}
+                                    disabled={product.quantity - (cartItem?.quantity || 0) === 0} // Disable button when quantity is 0
+                                    className={`${
+                                        product.quantity - (cartItem?.quantity || 0) === 0
+                                            ? 'opacity-50 cursor-not-allowed hover:bg-cream hover:text-black'
+                                            : ''
+                                    }`}
+                                >
+                                    Add to Cart
+                                </Button>
+                                {/* Popup Notification */}
                                 <div
                                     className={`absolute -top-3 -left-7 text-coffee px-3 py-1 transition-opacity duration-500 ${
                                         popupVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
                                     }`}
-                                > ✨Wamptastic✨
+                                >
+                                    {product.quantity - (cartItem?.quantity || 0) === 0 ? '' : '✨Wamptastic✨'}
                                 </div>
-                                
                             </div>
                         </div>
-                        
 
                         {/* Shipping info */}
                         <div className="mt-8 border-t border-t-camel">
@@ -131,7 +174,7 @@ const DetailPage: React.FC = () => {
                 </div>
 
                 {/* You may also like */}
-                <div className="basis-[25%]">
+                <div className="basis-[25%] -mt-4">
                     <Suggest currentCategory={product.category} currentProduct={product.id} columns={1} />
                 </div>
             </div>
@@ -140,5 +183,6 @@ const DetailPage: React.FC = () => {
 };
 
 export default DetailPage;
+
 
 

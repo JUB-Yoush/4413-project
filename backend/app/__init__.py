@@ -1,12 +1,12 @@
 from flask import Flask
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from database import get_database
 
 
 def create_app(testing=False):
     print("creating blueprint")
     app = Flask(__name__)
-    cors = CORS(app)
+    CORS(app)
     app.config["CORS_HEADERS"] = "Content-Type"
     app.config["TESTING"] = testing
 

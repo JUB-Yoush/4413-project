@@ -27,10 +27,8 @@
 
 # checkout
 
-- [ ] checkout cart
+- [x] checkout cart
 
 # sales
 
-- [ ] query history
-- [ ] get sale
-- [ ] post sale
+- [x] query history

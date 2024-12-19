@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import CartIcon from './CartIcon';
 import CartItemDisplay from './CartDropdownItem';
-import { useCartContext } from '../cart/CartContext';
+import { useCartContext } from '../../cart/CartContext';
 
 const CartDropdown: React.FC = () => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);

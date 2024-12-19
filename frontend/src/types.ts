@@ -45,6 +45,7 @@ export interface Order {
     date: string;
     purchases: CartItem[];
     user: User;
+    total_price: number
 }
 export interface OrderProxy {
     id: string;

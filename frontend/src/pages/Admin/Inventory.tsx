@@ -3,7 +3,7 @@ import Button from "../../components/Button.tsx";
 import {Product} from "../../types.ts";
 import {useSearchParams} from "react-router-dom";
 import axios from "axios";
-import SortDropdown from "../../components/SortDropdown.tsx";
+import SortDropdown from "../../components/Catalog/SortDropdown.tsx";
 import InventoryProduct from "../../components/Admin/InventoryProduct.tsx";
 import InventorySidebar from "../../components/Admin/InventorySidebar.tsx";
 

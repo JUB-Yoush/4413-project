@@ -5,7 +5,11 @@ import Button from "../../components/Button.tsx";
 import {OrderTable} from "../../components/Admin/Table.tsx";
 import {forEach} from "lodash";
 import TableDropDown from "../../components/Admin/TableDropDown.tsx";
+import { useSPAContext } from "../../components/Admin/AdminSPAContext.tsx";
+
 const Orders: React.FC = () => {
+
+    const { currentPage } = useSPAContext(); 
 
     const defaultOrder: Order = {
         "id": "90", "approved": false, "date": "Wed,19 Nov, 2024",
@@ -138,7 +142,7 @@ const Orders: React.FC = () => {
     }
 
     const defaultOrderForm = {
-        "id": order.id, "approved": `${order.approved}`,
+        "id": order.id, "approved": Boolean(order.approved),
         "date": order.date,
         "purchases": order.purchases,
         "user": {
@@ -156,28 +160,50 @@ const Orders: React.FC = () => {
 
     useEffect(()=>{setOrderForm(defaultOrderForm)},[order]);
 
+    useEffect(() => {
+        if (currentPage === "orders") {
+            getOrders();
+        }
+    }, [currentPage]);
+
+    useEffect(() => {
+        getOrders();
+    }, []);
+
     function editOrder(event: React.FormEvent) {
-        // handle sending info to flask once the form is submitted
-        if(order.id) {
+        if (order.id) {
             axios({
                 method: "patch",
-                baseURL: 'http://127.0.0.1:5000', //can replace with personal port
-                url: `/order/${orderForm.id}`,
-                data: {
-                    approved: orderForm.approved,
-                }
-            }).then(async () => {
-                alert("Order Edited!");
-            }).catch((error) => {
-                if (error.response) {
-                    console.log(error.response);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
-                }
+                baseURL: 'http://127.0.0.1:5000',
+                url: `/sale/${order.id}/toggle-approval`,
             })
+            .then(() => {
+                // Update the orders array with the new approved status
+                const updatedOrders = orders.map(o =>
+                    o.id === order.id ? { ...o, approved: !o.approved } : o
+                );
+                setOrders(updatedOrders); // Update the orders state
+    
+                // Update the current order state
+                setOrder((prev) => ({ ...prev, approved: !prev.approved }));
+    
+                // Regenerate order proxies for the table
+                collateProxiesAndOrders();
+    
+                // alert(`Order ${order.approved ? "Declined" : "Approved"}!`);
+            })
+            .catch((error) => {
+                console.error("Error:", error.response || error.message);
+            });
+    
             event.preventDefault();
         }
     }
+    
+
+    useEffect(() => {
+        console.log("Updated Approved Status:", typeof orderForm.approved, orderForm.approved);
+    }, [orderForm.approved]);
 
     const ocolumns = [
         { id: 1, header: 'Order ID', accessor: 'id' },
@@ -231,14 +257,18 @@ const Orders: React.FC = () => {
                 <div className={"z-10 flex absolute t-0 l-0 p-10 w-9/12 h-5/6 items-center justify-center bg-cream"}>
                     <dialog open className={"bg-beige border border-camel px-10 py-4 w-9/12 h-5/6 overflow-y-auto"}>
 
-                        <div className={"grid grid-cols-2 mb-6"}>
-                            {orderForm.approved?
-                                <Button onClick={editOrder} buttonVariant={"sec"}>Decline Order</Button>
-                                :
-                                <Button onClick={editOrder}>Approve Order</Button>
-                            }
-                            <Button onClick={()=>{setShowDialog(false);}}>Close</Button>
-                        </div>
+                    <div className={"grid grid-cols-2 mb-6"}>
+                    {orderForm.approved ? (
+                        <Button onClick={editOrder} buttonVariant={"sec"}>
+                            Decline Order
+                        </Button>
+                    ) : (
+                        <Button onClick={editOrder}>
+                            Approve Order
+                        </Button>
+                    )}
+                    <Button onClick={() => setShowDialog(false)}>Close</Button>
+                </div>
 
                         {/*// only show user account details, no edit*/}
                         <div className="grid items-center min-w-full">
@@ -260,7 +290,9 @@ const Orders: React.FC = () => {
                                 </div>
                                 <div className={labelDivStyle}>
                                     <label htmlFor={"approved"}>Approval State</label>
-                                    <p className={pStyle}>{orderForm.approved}</p>
+                                    <p className={pStyle}>
+                                        {orderForm.approved ? "Approved" : "Not Approved"}
+                                    </p>
                                 </div>
                             </div>
                         </div>

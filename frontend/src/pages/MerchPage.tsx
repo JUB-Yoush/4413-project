@@ -1,21 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import Sidebar from "../components/Sidebar"; 
-import CatalogProduct from "../components/CatalogProduct";
-import SortDropdown from "../components/SortDropdown";
+import Sidebar from "../components/Sidebars/Sidebar"; 
+import CatalogProduct from "../components/Catalog/CatalogProduct";
+import SortDropdown from "../components/Catalog/SortDropdown";
 import Button from "../components/Button";
 import axios from "axios";
 import { Product } from "../types";
+import { useSearch } from "../components/SearchContext";
 
 
-interface MerchPageProps {
-  searchQuery: string; // Passed from the navbar
-}
 
-const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
+
+const MerchPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+
+  const { searchQuery } = useSearch();
 
   // Sorting state
   const [sortBy, setSortBy] = useState<string>("name");
@@ -80,7 +81,7 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
     } finally {
       setLoading(false);
     }
-    // console.log("Query params:", queryParams);
+    console.log("Query params:", queryParams);
   }, [searchQuery, sortBy, order, categoryFilter, albumFilter, priceRange]);
 
   useEffect(() => {
@@ -146,7 +147,7 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
     setSearchParams(newSearchParams);
   };
 
-  if (loading) return <p>Loading..</p>;
+  if (loading) return <p></p>;
   if (error)
     return (
       <div className="text-center">
@@ -179,7 +180,7 @@ const MerchPage: React.FC<MerchPageProps> = ({ searchQuery }) => {
       <div className="flex-grow ml-[45px] mr-[200px]">
         <div className="text-xl"  style={{fontFamily: "'Lexend Zetta', sans-serif"}}>MERCH STORE - {currentCategory} </div>
 
-        <div className="flex justify-between items-center pt-2 py-5">
+        <div className="flex justify-between items-center pt-6 pb-2">
           <div>Showing {products.length} products</div>
           <SortDropdown onSortChange={handleSortChange} selectedOption={selectedOption} />
         </div>

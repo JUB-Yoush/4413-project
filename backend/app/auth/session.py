@@ -1,5 +1,4 @@
 import jwt
-import bcrypt
 from ..models import Admin, User
 from env import SECRET_KEY
 from flask import request, jsonify

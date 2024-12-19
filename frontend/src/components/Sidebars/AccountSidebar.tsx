@@ -1,5 +1,5 @@
 import React from 'react';
-import {useTokenContext} from "./TokenContext.tsx";
+import {useTokenContext} from "../TokenContext.tsx";
 
 const AccountSidebar: React.FC = () => {
 

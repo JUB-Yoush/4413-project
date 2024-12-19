@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import Button from '../../components/Button.tsx';
 import 'react-medium-image-zoom/dist/styles.css';
 import axios from "axios";
+import { useMetadata } from "../../components/MetadataContext"; 
 
 const AddProductPage: React.FC = () => {
+
+    const { refreshMetadata } = useMetadata();
 
     // addProduct form state starts with email and password as empty strings
     const [prodForm, setProdForm]
@@ -30,6 +33,8 @@ const AddProductPage: React.FC = () => {
         //     TODO confirmation of product added
         //     perhaps prompt to view on merch page
             alert("Product Added!");
+
+            refreshMetadata();
             window.location.href = `/admin/inventory`;
         }).catch((error) => {
             if (error.response) {

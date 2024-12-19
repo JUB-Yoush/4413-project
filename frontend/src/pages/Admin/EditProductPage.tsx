@@ -5,6 +5,7 @@ import Button from '../../components/Button.tsx';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import axios from "axios";
+import { useMetadata } from "../../components/MetadataContext"; 
 
 
 const EditProductPage: React.FC = () => {
@@ -19,6 +20,8 @@ const EditProductPage: React.FC = () => {
         = useState({id: "Product ID", name: "Product Name", category: "Product Category",
         brand: "Product Brand", album: "Product Album", price: 0.00,
         description: "Product Description", image_url: "Image URL", quantity: 1});
+
+    const { refreshMetadata } = useMetadata();
 
     function getProduct(id: string) {
         // only used if the person directly searches for the product url
@@ -74,6 +77,9 @@ const EditProductPage: React.FC = () => {
                 setTimeout(() => setPopupVisible(false), 800); // Start fade out
                 setShowForm(false);
                 alert("Product Edited!");
+
+                refreshMetadata();
+                
                 getProduct(id); //update the product
             }).catch((error) => {
                 if (error.response) {

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getCartBackend, addToCartBackend, updateCartBackend, removeFromCartBackend, clearCartBackend} from './backendCart';
 import { getCart, addToCart, updateCart, removeFromCart} from './localCart';
 import { CartItem, Cart, Product } from '../types';
-import usePromptUserChoice from '../components/PromptUserChoice';
+import usePromptUserChoice from '../components/Cart/PromptUserChoice';
 import {useTokenContext} from "../components/TokenContext.tsx";
 
 interface CartContextProps {
@@ -40,7 +40,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setCartTotal(total);
                 setCartCount(count);
             } else {
-                const localCart: Cart = getCart();
+                const localCart: Cart = await getCart();
                 const items = localCart.items || [];
                 const total = localCart.cart_total || 0;
                 const count = localCart.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -106,7 +106,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const handleCartMergeOnLogin = async () => {
-        const localCart = getCart();
+        const localCart = await getCart();
         const token = localStorage.getItem('token');
 
         if (!token) {

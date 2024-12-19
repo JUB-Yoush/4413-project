@@ -8,10 +8,10 @@ type BaseInputAttributes = React.ComponentPropsWithoutRef<"input">;
 interface InputProps extends BaseInputAttributes {
     id: string,
     name: string,
-    value: string,
+    value?: string,
     handleChange?(event: React.ChangeEvent<HTMLInputElement>): void,
 
-    validation: {}
+    validation?: {}
 
     label: string,
     htmlFor: string,

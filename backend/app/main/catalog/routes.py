@@ -1,7 +1,5 @@
-from flask import render_template, redirect, url_for, request, jsonify
-import jwt
+from flask import request, jsonify
 from . import catalog
-import bcrypt
 from app.models import Product
 from mongoengine import Q
 from ...auth.session import admin_required
@@ -21,7 +19,7 @@ def get_products():
         order = request.args.get("order", "asc")
 
         # build query
-        query = Q()
+        query = Q(is_deleted=False)
         if category:
             category_list = category.split(",")
             query &= Q(category__in=category_list)  # OR logic
@@ -101,7 +99,23 @@ def edit_product(product_id):
 def delete_product(product_id):
     try:
         product = Product.objects.get(id=product_id)
-        product.delete()
+        product.update(set__is_deleted=True)
         return jsonify({"message": "product deleted"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@catalog.route("/metadata", methods=["GET"])
+def get_categories_and_albums():
+    try:
+        # Query for all unique categories and albums without filtering 'is_deleted'
+        categories = Product.objects().distinct("category")
+        albums = Product.objects().distinct("album")
+
+        # Return the categories and albums as a list
+        return jsonify({
+            "categories": categories,
+            "albums": albums
+        }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

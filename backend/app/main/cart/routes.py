@@ -3,38 +3,67 @@ from flask import jsonify, request
 
 from app.auth.session import (
     get_user_from_token,
-    user_required,
     get_referenced_user,
     user_or_admin_required,
 )
-from app.models import CartItem, Product, User
+from app.models import CartItem, Product
 
 from mongoengine import DoesNotExist
 from . import cart
 
+def sync_user_cart(user):
+    updated_cart_items = []
+    for item in user.cart_items:
+        try:
+            # Check if the product exists and is not deleted
+            product = Product.objects.get(id=item.product_id.id, is_deleted=False)
+
+            # Adjust quantity if it exceeds available stock
+            if item.quantity > product.quantity:
+                item.quantity = product.quantity  # Set to maximum allowable stock
+
+            # Only add items with valid quantities
+            if item.quantity > 0:
+                updated_cart_items.append(item)
+        except Product.DoesNotExist:
+            continue
+
+    # Update the user's cart if necessary
+    if len(updated_cart_items) != len(user.cart_items) or any(
+        item.quantity != old_item.quantity
+        for item, old_item in zip(updated_cart_items, user.cart_items)
+    ):
+        user.update(
+            set__cart_items=updated_cart_items,
+            set__cart_total=sum(
+                item.quantity * Product.objects.get(id=item.product_id.id).price
+                for item in updated_cart_items
+            )
+        )
+        user.reload()
+
+    
 
 @cart.route("/", methods=["GET"])
 @user_or_admin_required
 def get_cart():
     token = request.headers.get("Authorization")
     payload = get_user_from_token(token)
-    # get user from token
     user = get_referenced_user(payload)
 
-    cart_items = []
+    sync_user_cart(user)  # Ensure the cart is synchronized
+    cart_items = [
+        {
+            "product_id": str(item.product_id.id),
+            "name": Product.objects.get(id=item.product_id.id).name,
+            "price": Product.objects.get(id=item.product_id.id).price,
+            "quantity": item.quantity,
+            "total_price": Product.objects.get(id=item.product_id.id).price * item.quantity,
+            "image_url": Product.objects.get(id=item.product_id.id).image_url,
+        }
+        for item in user.cart_items
+    ]
 
-    for item in user.cart_items:
-        product = Product.objects.get(id=item.product_id.id)
-        cart_items.append(
-            {
-                "product_id": str(product.id),
-                "name": product.name,
-                "price": product.price,
-                "total_price": product.price * item.quantity,
-                "quantity": item.quantity,
-                "image_url": product.image_url,
-            }
-        )
     return jsonify({"items": cart_items, "cart_total": user.cart_total}), 200
 
 

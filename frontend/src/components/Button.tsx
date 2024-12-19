@@ -41,11 +41,14 @@ const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
     }
 
     return (
-        <button
-            className={renderButtonVariant()}
+        <button 
+        className={`${renderButtonVariant()} ${
+            disabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
             {...rest}
             type={type ? "submit" : "button"}
             onClick={onClick}
+            disabled={disabled}
             ref={ref}
         >
             {children}

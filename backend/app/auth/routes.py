@@ -1,7 +1,6 @@
-from flask import render_template, redirect, url_for, request, jsonify
+from flask import request, jsonify
 from . import auth
 from ..models import User, Admin
-import jwt
 import bcrypt
 from .session import generate_token
 from cryptography.fernet import Fernet

@@ -1,5 +1,5 @@
 from env import DB_URI
-from mongoengine import connect, DoesNotExist
+from mongoengine import connect
 from mongomock import MongoClient
 
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import AccountSidebar from "../components/AccountSidebar.tsx";
+import AccountSidebar from "../components/Sidebars/AccountSidebar.tsx";
 import OrderBlock from "../components/OrderBlock.tsx";
 import {Order} from "../types.ts";
 import axios from "axios";
@@ -13,10 +13,12 @@ const OrderHistory: React.FC = () => {
             method: "get",
             baseURL: "http://localhost:5000",
             url: `/sale/orders`,
+            params: {
+                sort_by: "date", // Specify the field to sort by
+                order: "desc",   // Specify the sort order ('asc' or 'desc')
+            },
         }).then((response: axios.AxiosResponse) => {
             setOrders(response.data.sales);
-            console.log(`user email ${orders[0].user.email}`);
-            console.log(`user email ${response.data.sales}`);
         }).catch((error) => {
             if (error.response) {
                 console.log(error.response);
@@ -27,6 +29,7 @@ const OrderHistory: React.FC = () => {
     }
     // keep proxies in sync
     useEffect(()=>{getOrders()},[]);
+
 
     return (
         <div className={"flex mt-4 mb-10 min-h-full"}>
@@ -43,6 +46,8 @@ const OrderHistory: React.FC = () => {
                                 id={order.id}
                                 date={order.date.slice(0,16)}
                                 purchases={order.purchases}
+                                approvals={order.approved}
+                                order_total={order.total_price}
                             />
                         </div>
                     ))}

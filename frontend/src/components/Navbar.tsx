@@ -1,32 +1,36 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import ProfileDropdown from './ProfileDropdown';
-import CartDropdown from './CartDropdown';
+import { useLocation } from 'react-router-dom';
+import ProfileDropdown from './ProfileDropdown.tsx';
+import CartDropdown from './Cart/CartDropdown.tsx';
 import Logo from "./Logo.tsx";
+import { useSearch } from "./SearchContext"; // Import the search context
 
 // Define a type for the navigation links
 interface NavLink {
-    name: string;
-    href: string;
+  name: string;
+  href: string;
 }
-  
+
 // Sample navigation links
 const navLinks: NavLink[] = [
   { name: 'Merch', href: '/catalog/products' },
   { name: 'Contact', href: '/contact' }
 ];
 
-interface Prop{
-  onSearch: (query: string) => void
-}
+const Navbar: React.FC = () => {
+  const { searchQuery, handleSearch } = useSearch(); // Use the SearchContext
+  const [searchTerm, setSearchTerm] = useState<string>(searchQuery || ''); // Local state for input
+  const location = useLocation();
 
-const Navbar: React.FC<Prop> = (prop) => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  // Enable search only on specific pages
+  const isSearchEnabled = location.pathname === '/catalog/products';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
-    prop.onSearch(value);
+    console.log('Search term:', value);
+    handleSearch(value); // Update the search context globally
   };
   const liStyle = "flex items-center justify-center w-full h-full py-1";
   return (
@@ -34,7 +38,9 @@ const Navbar: React.FC<Prop> = (prop) => {
       <ul className="flex flex-row text-center items-center">
         
         {/* DJ WAMP Logo */}
-        <li className="basis-[24%] flex justify-start"> <a href={"/catalog/products"}> <Logo size={25}/></a></li>
+        <li className="basis-[24%] flex justify-start">
+          <a href={"/catalog/products"}> <Logo size={25}/></a>
+        </li>
 
         {/* Page Links */}
         <li className="basis-[50%] pr-[90px]">
@@ -66,13 +72,15 @@ const Navbar: React.FC<Prop> = (prop) => {
         </li>
 
         {/* Search Bar */}
-        <li className="basis-[20%] flex items-center space-x-2 pl-[30px]">
+        <li className="basis-[20%] flex items-center text-black space-x-2 pl-[30px]">
           <span>Search</span>
           <input
             type="text"
-            className="border border-camel bg-transparent p-1 flex-grow w-full"
+            className="border border-camel bg-transparent p-1 flex-grow w-full text-black placeholder-coffee"
             value={searchTerm}
             onChange={handleInputChange}
+            disabled={!isSearchEnabled} // Disable input if not on the allowed page
+            placeholder={!isSearchEnabled ? 'Search disabled on this page' : 'Product Name'}
           />
         </li>
       </ul>
@@ -81,3 +89,4 @@ const Navbar: React.FC<Prop> = (prop) => {
 };
 
 export default Navbar;
+

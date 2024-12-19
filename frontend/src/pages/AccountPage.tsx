@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useForm, FormProvider} from "react-hook-form";
-import AccountSidebar from "../components/AccountSidebar.tsx";
+import AccountSidebar from "../components/Sidebars/AccountSidebar.tsx";
 import axios from "axios";
 import {User} from "../types.ts";
 import Button from "../components/Button.tsx";
@@ -107,30 +107,47 @@ const AccountPage: React.FC = () => {
     const methods = useForm();
 
     const editUserOther = methods.handleSubmit(() => {
-        // handle sending info to flask once the form is submitted
+        // Prepare the data payload
+        const payload = {
+            email: accountData.email.trim(),
+            street: accountData.street.trim(),
+            city: accountData.city.trim(),
+            province: accountData.province.trim(),
+            postal_code: accountData.postal_code.trim(),
+        };
+    
+        // Make the PATCH request
         axios({
             method: "patch",
-            baseURL: 'http://127.0.0.1:5000',
+            baseURL: "http://127.0.0.1:5000",
             url: `/user/`,
-            data: {
-                email: accountData.email.trim(),
-                street: accountData.street.trim(),
-                city: accountData.city.trim(),
-                province: accountData.province.trim(),
-                postal_code: accountData.postal_code.trim()
-            }
-        }).then((response) => {
-            setToken(response.data.token);
-            setIsEditOther(false);
-            alert("Account Edited!");
-        }).catch((error) => {
-            if (error.response) {
-                console.log(error.response);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            }
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
+            },
+            data: payload,
         })
+            .then((response) => {
+                // Handle success
+                console.log("Response:", response);
+                setToken(response.data.token); // Update token if necessary
+                setIsEditOther(false); // Exit edit mode
+                alert("Account Edited Successfully!");
+            })
+            .catch((error) => {
+                // Handle errors
+                if (error.response) {
+                    console.error("Error Response:", error.response);
+                    alert(`Failed to edit account: ${error.response.data.error || "Unknown error"}`);
+                } else if (error.request) {
+                    console.error("No Response Received:", error.request);
+                    alert("Failed to edit account: No response from the server.");
+                } else {
+                    console.error("Error:", error.message);
+                    alert(`Failed to edit account: ${error.message}`);
+                }
+            });
     });
+    
     const [oldPWMatches, setOldPWMatches] = useState(false);
     const editUserPW = methods.handleSubmit(() => {
         axios({
@@ -203,11 +220,13 @@ const AccountPage: React.FC = () => {
             setIsEditCC(false);
             alert("Account Edited!");
         }).catch((error) => {
-            if (error.response) {
-                console.log(error.response);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            }
+            if (error.response && error.response.status === 400) {
+                // Handle bad request with a popup
+                alert(error.response.data.error);
+              } else {
+                console.error(error);
+                alert("An unexpected error occurred. Please try again.");
+              }
         })
     });
 
